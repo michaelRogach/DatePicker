@@ -48,11 +48,11 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
     val listener: MonthView.Listener = CellClickedListener()
     val months: MutableList<MonthDescriptor> = ArrayList()
-    val selectedCells: MutableList<MonthCellDescriptor?> = ArrayList()
-    val highlightedCells: MutableList<MonthCellDescriptor?> = ArrayList()
+    val selectedCells: MutableList<MonthCellDescriptor> = ArrayList()
+    val highlightedCells: MutableList<MonthCellDescriptor> = ArrayList()
     val selectedCals: MutableList<Calendar> = ArrayList()
     val highlightedCals: MutableList<Calendar> = ArrayList()
-    var deactivatedDates = ArrayList<Int?>()
+    var deactivatedDates = ArrayList<Int>()
     private var locale: Locale
     private var timeZone: TimeZone
     private var monthNameFormat: DateFormat? = null
@@ -195,20 +195,18 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             return withSelectedDates(listOf(selectedDates))
         }
 
-        fun withSelectedDates(selectedDates: Collection<Date?>?): FluentInitializer {
-            require(!(selectionMode == SelectionMode.SINGLE && selectedDates!!.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
-            require(!(selectionMode == SelectionMode.RANGE && selectedDates!!.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates!!.size }
-            if (selectedDates != null) {
-                for (date in selectedDates) {
-                    selectDate(date)
-                }
+        private fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
+            require(!(selectionMode == SelectionMode.SINGLE && selectedDates.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
+            require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates!!.size }
+            for (date in selectedDates) {
+                selectDate(date)
             }
             scrollToSelectedDates()
             validateAndUpdate()
             return this
         }
 
-        fun withHighlightedDates(dates: Collection<Date?>): FluentInitializer {
+        fun withHighlightedDates(dates: Collection<Date>): FluentInitializer {
             highlightDates(dates)
             return this
         }
@@ -235,7 +233,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             return this
         }
 
-        fun withDeactivateDates(deactivateDates: ArrayList<Int?>): FluentInitializer {
+        fun withDeactivateDates(deactivateDates: ArrayList<Int>): FluentInitializer {
             deactivateDates(deactivateDates)
             return this
         }
@@ -381,7 +379,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     private inner class CellClickedListener : MonthView.Listener {
         override fun handleClick(cell: MonthCellDescriptor?) {
-            val clickedDate = cell!!.date
+            val clickedDate = cell?.date ?: return
             val calendar = Calendar.getInstance()
             calendar.time = clickedDate
             val day = calendar[Calendar.DAY_OF_WEEK]
@@ -409,7 +407,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     }
 
     @JvmOverloads
-    fun selectDate(date: Date?, smoothScroll: Boolean = false): Boolean {
+    fun selectDate(date: Date, smoothScroll: Boolean = false): Boolean {
         validateDate(date)
         val monthCellWithMonthIndex = getMonthCellWithIndexByDate(date)
         if (monthCellWithMonthIndex == null || !isDateSelectable(date)) {
@@ -432,16 +430,15 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         }
     }
 
-    private fun doSelectDate(date: Date?, cell: MonthCellDescriptor?): Boolean {
-        var date = date
-        val newlySelectedCal = Calendar.getInstance(timeZone, locale)
-        newlySelectedCal.time = date
+    private fun doSelectDate(date: Date, cell: MonthCellDescriptor): Boolean {
+        var newDate: Date? = date
+        val newlySelectedCal = Calendar.getInstance(timeZone, locale).apply { time = date }
         // Sanitize input: clear out the hours/minutes/seconds/millis.
         setMidnight(newlySelectedCal)
 
         // Clear any remaining range state.
         for (selectedCell in selectedCells) {
-            selectedCell!!.rangeState = RangeState.NONE
+            selectedCell.rangeState = RangeState.NONE
         }
         when (selectionMode) {
             SelectionMode.RANGE -> if (selectedCals.size > 1) {
@@ -451,23 +448,23 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                 // We're moving the start of the range back in time: clear the old start date.
                 clearOldSelections()
             }
-            SelectionMode.MULTIPLE -> date = applyMultiSelect(date, newlySelectedCal)
+            SelectionMode.MULTIPLE -> newDate = applyMultiSelect(date, newlySelectedCal)
             SelectionMode.SINGLE -> clearOldSelections()
             else -> throw IllegalStateException("Unknown selectionMode $selectionMode")
         }
-        if (date != null) {
+        if (newDate != null) {
             // Select a new cell.
             if (selectedCells.size == 0 || selectedCells[0] != cell) {
                 selectedCells.add(cell)
-                cell!!.isSelected = true
+                cell.isSelected = true
             }
             selectedCals.add(newlySelectedCal)
             if (selectionMode == SelectionMode.RANGE && selectedCells.size > 1) {
                 // Select all days in between start and end.
-                val start = selectedCells[0]!!.date
-                val end = selectedCells[1]!!.date
-                selectedCells[0]!!.rangeState = RangeState.FIRST
-                selectedCells[1]!!.rangeState = RangeState.LAST
+                val start = selectedCells[0].date
+                val end = selectedCells[1].date
+                selectedCells[0].rangeState = RangeState.FIRST
+                selectedCells[1].rangeState = RangeState.LAST
                 val startMonthIndex = cells.getIndexOfKey(monthKey(selectedCals[0]))
                 val endMonthIndex = cells.getIndexOfKey(monthKey(selectedCals[1]))
                 for (monthIndex in startMonthIndex..endMonthIndex) {
@@ -502,7 +499,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
         // Update the adapter.
         validateAndUpdate()
-        return date != null
+        return newDate != null
     }
 
     private fun monthKey(cal: Calendar): String {
@@ -514,22 +511,24 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     }
 
     private fun clearOldSelections() {
-        for (selectedCell in selectedCells) {
+        selectedCells.forEach {
             // De-select the currently-selected cell.
-            selectedCell!!.isSelected = false
-            if (highlightedCells.contains(selectedCell)) {
-                selectedCell.isMarked = false
-                selectedCell.isHighlighted = true
-            }
-            if (dateListener != null) {
-                val selectedDate = selectedCell.date
-                if (selectionMode == SelectionMode.RANGE) {
-                    val index = selectedCells.indexOf(selectedCell)
-                    if (index == 0 || index == selectedCells.size - 1) {
-                        dateListener!!.onDateUnselected(selectedDate)
+            it.apply {
+                isSelected = false
+                if (highlightedCells.contains(this)) {
+                    isMarked = false
+                    isHighlighted = true
+                }
+                dateListener?.let {
+                    val selectedDate = date
+                    if (selectionMode == SelectionMode.RANGE) {
+                        val index = selectedCells.indexOf(this)
+                        if (index == 0 || index == selectedCells.size - 1) {
+                            it.onDateUnselected(selectedDate)
+                        }
+                    } else {
+                        it.onDateUnselected(selectedDate)
                     }
-                } else {
-                    dateListener!!.onDateUnselected(selectedDate)
                 }
             }
         }
@@ -537,14 +536,14 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         selectedCals.clear()
     }
 
-    private fun applyMultiSelect(date: Date?, selectedCal: Calendar): Date? {
-        var date = date
+    private fun applyMultiSelect(date: Date, selectedCal: Calendar): Date? {
+        var newDate: Date? = date
         for (selectedCell in selectedCells) {
-            if (selectedCell!!.date == date) {
+            if (selectedCell.date == newDate) {
                 // De-select the currently-selected cell.
                 selectedCell.isSelected = false
                 selectedCells.remove(selectedCell)
-                date = null
+                newDate = null
                 break
             }
         }
@@ -554,10 +553,10 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                 break
             }
         }
-        return date
+        return newDate
     }
 
-    fun highlightDates(dates: Collection<Date?>) {
+    fun highlightDates(dates: Collection<Date>) {
         for (date in dates) {
             validateDate(date)
             val monthCellWithMonthIndex = getMonthCellWithIndexByDate(date)
@@ -573,14 +572,14 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         validateAndUpdate()
     }
 
-    fun deactivateDates(deactivatedDates: ArrayList<Int?>) {
+    fun deactivateDates(deactivatedDates: ArrayList<Int>) {
         this.deactivatedDates = deactivatedDates
         validateAndUpdate()
     }
 
     fun clearSelectedDates() {
         for (selectedCell in selectedCells) {
-            selectedCell!!.rangeState = RangeState.NONE
+            selectedCell.rangeState = RangeState.NONE
         }
         clearOldSelections()
         validateAndUpdate()
@@ -588,7 +587,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     fun clearHighlightedDates() {
         for (cal in highlightedCells) {
-            cal!!.isHighlighted = false
+            cal.isHighlighted = false
         }
         highlightedCells.clear()
         highlightedCals.clear()
@@ -656,7 +655,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     }
 
-    fun getMonthCells(month: MonthDescriptor, startCal: Calendar?): List<List<MonthCellDescriptor>> {
+    private fun getMonthCells(month: MonthDescriptor, startCal: Calendar?): List<List<MonthCellDescriptor>> {
         val cal = Calendar.getInstance(timeZone, locale)
         cal.time = startCal!!.time
         val cells: MutableList<List<MonthCellDescriptor>> = ArrayList()
@@ -671,7 +670,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         val maxSelectedCal = maxDate(selectedCals)
         while ((cal[Calendar.MONTH] < month.month + 1 || cal[Calendar.YEAR] < month.year) //
             && cal[Calendar.YEAR] <= month.year) {
-//            d("Building week row starting at %s", cal.time)
             val weekCells: MutableList<MonthCellDescriptor> = ArrayList()
             cells.add(weekCells)
             for (c in 0..6) {
@@ -684,12 +682,16 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                 val value = cal[Calendar.DAY_OF_MONTH]
                 var rangeState = RangeState.NONE
                 if (selectedCals.size > 1) {
-                    if (sameDate(minSelectedCal, cal)) {
-                        rangeState = RangeState.FIRST
-                    } else if (sameDate(maxDate(selectedCals), cal)) {
-                        rangeState = RangeState.LAST
-                    } else if (betweenDates(cal, minSelectedCal, maxSelectedCal)) {
-                        rangeState = RangeState.MIDDLE
+                    when {
+                        sameDate(minSelectedCal, cal) -> {
+                            rangeState = RangeState.FIRST
+                        }
+                        sameDate(maxDate(selectedCals), cal) -> {
+                            rangeState = RangeState.LAST
+                        }
+                        betweenDates(cal, minSelectedCal, maxSelectedCal) -> {
+                            rangeState = RangeState.MIDDLE
+                        }
                     }
                 }
                 weekCells.add(
@@ -814,8 +816,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         /**
          * Clears out the hours/minutes/seconds/millis of a Calendar.
          */
-        fun setMidnight(cal: Calendar?) {
-            cal!![Calendar.HOUR_OF_DAY] = 0
+        fun setMidnight(cal: Calendar) {
+            cal[Calendar.HOUR_OF_DAY] = 0
             cal[Calendar.MINUTE] = 0
             cal[Calendar.SECOND] = 0
             cal[Calendar.MILLISECOND] = 0

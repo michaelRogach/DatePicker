@@ -1,13 +1,14 @@
 package com.example.datepicker
 
-import android.widget.TextView
-import android.view.ViewGroup
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
-import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.view.children
 
 /** TableRow that draws a divider between each cell. To be used with [CalendarGridView].  */
 class CalendarRowView(context: Context?, attrs: AttributeSet?) : ViewGroup(context, attrs), View.OnClickListener {
@@ -68,7 +69,7 @@ class CalendarRowView(context: Context?, attrs: AttributeSet?) : ViewGroup(conte
     override fun onClick(v: View) {
         // Header rows don't have a click listener
         if (listener != null) {
-            listener!!.handleClick(v.tag as MonthCellDescriptor)
+            listener?.handleClick(v.tag as MonthCellDescriptor)
         }
     }
 
@@ -77,47 +78,46 @@ class CalendarRowView(context: Context?, attrs: AttributeSet?) : ViewGroup(conte
     }
 
     fun setDayViewAdapter(adapter: DayViewAdapter) {
-        for (i in 0 until childCount) {
-            if (getChildAt(i) is CalendarCellView) {
-                val cell = getChildAt(i) as CalendarCellView
-                cell.removeAllViews()
-                adapter.makeCellView(cell)
+        children.forEach { view ->
+            if (view is CalendarCellView) {
+                view.removeAllViews()
+                adapter.makeCellView(view)
             }
         }
     }
 
     fun setCellBackground(resId: Int) {
-        for (i in 0 until childCount) {
-            getChildAt(i).setBackgroundResource(resId)
+        children.forEach { view ->
+            view.setBackgroundResource(resId)
         }
     }
 
     fun setCellTextColor(resId: Int) {
-        for (i in 0 until childCount) {
-            if (getChildAt(i) is CalendarCellView) {
-                (getChildAt(i) as CalendarCellView).dayOfMonthTextView?.setTextColor(resId)
+        children.forEach { view ->
+            if (view is CalendarCellView) {
+                view.dayOfMonthTextView?.setTextColor(resId)
             } else {
-                (getChildAt(i) as TextView).setTextColor(resId)
+                (view as TextView).setTextColor(resId)
             }
         }
     }
 
     fun setCellTextColor(colors: ColorStateList?) {
-        for (i in 0 until childCount) {
-            if (getChildAt(i) is CalendarCellView) {
-                (getChildAt(i) as CalendarCellView).dayOfMonthTextView?.setTextColor(colors)
+        children.forEach { view ->
+            if (view is CalendarCellView) {
+                view.dayOfMonthTextView?.setTextColor(colors)
             } else {
-                (getChildAt(i) as TextView).setTextColor(colors)
+                (view as TextView).setTextColor(colors)
             }
         }
     }
 
     fun setTypeface(typeface: Typeface?) {
-        for (i in 0 until childCount) {
-            if (getChildAt(i) is CalendarCellView) {
-                (getChildAt(i) as CalendarCellView).dayOfMonthTextView?.setTypeface(typeface)
+        children.forEach { view ->
+            if (view is CalendarCellView) {
+                view.dayOfMonthTextView?.setTypeface(typeface)
             } else {
-                (getChildAt(i) as TextView).setTypeface(typeface)
+                (view as TextView).setTypeface(typeface)
             }
         }
     }

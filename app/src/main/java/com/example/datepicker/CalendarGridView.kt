@@ -1,13 +1,13 @@
 package com.example.datepicker
 
-import android.view.ViewGroup
-import android.graphics.Typeface
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 
 /**
  * ViewGroup that draws a grid of calendar cells.  All children must be [com.savvi.rangedatepicker.CalendarRowView]s.
@@ -100,14 +100,11 @@ class CalendarGridView(context: Context?, attrs: AttributeSet?) : ViewGroup(cont
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//        Log.d("Grid.onMeasure w=%s ", MeasureSpec.toString(widthMeasureSpec), MeasureSpec.toString(heightMeasureSpec))
         var widthMeasureSize = MeasureSpec.getSize(widthMeasureSpec)
         if (oldWidthMeasureSize == widthMeasureSize) {
-            Log.d("SKIP Grid.onMeasure", "")
             setMeasuredDimension(measuredWidth, measuredHeight)
             return
         }
-        val start = System.currentTimeMillis()
         oldWidthMeasureSize = widthMeasureSize
         val cellSize = widthMeasureSize / 7
         // Remove any extra pixels since /7 is unlikely to give whole nums.
@@ -131,13 +128,11 @@ class CalendarGridView(context: Context?, attrs: AttributeSet?) : ViewGroup(cont
         }
         val measuredWidth = widthMeasureSize + 2 // Fudge factor to make the borders show up.
         setMeasuredDimension(measuredWidth, totalHeight)
-        Log.d("Grid.onMeasure %d ms", (System.currentTimeMillis() - start).toString())
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        var top = top
         val start = System.currentTimeMillis()
-        top = 0
+        var top = 0
         var c = 0
         val numChildren = childCount
         while (c < numChildren) {

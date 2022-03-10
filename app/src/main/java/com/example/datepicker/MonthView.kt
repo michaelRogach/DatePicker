@@ -1,13 +1,13 @@
 package com.example.datepicker
 
 import android.content.Context
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.*
@@ -37,7 +37,7 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
     fun init(
         month: MonthDescriptor, cells: List<List<MonthCellDescriptor>>,
         displayOnly: Boolean, titleTypeface: Typeface?, dateTypeface: Typeface?,
-        deactivatedDates: ArrayList<Int?>, subTitles: ArrayList<SubTitle>?
+        deactivatedDates: ArrayList<Int>, subTitles: ArrayList<SubTitle>?
     ) {
 
         title?.text = month.label

@@ -1,13 +1,12 @@
 package com.example.datepicker.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.datepicker.CalendarPickerView
 import com.example.datepicker.R
-import com.example.datepicker.SubTitle
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,10 +22,10 @@ class SampleActivity : AppCompatActivity() {
         lastYear.add(Calendar.YEAR, -10)
         var calendar = findViewById<CalendarPickerView>(R.id.calendar_view)
         var button = findViewById<AppCompatButton>(R.id.get_selected_dates)
-        val list = ArrayList<Int?>()
+        val list = ArrayList<Int>()
         //        list.add(2);
         calendar.deactivateDates(list)
-        val arrayList = ArrayList<Date?>()
+        val arrayList = ArrayList<Date>()
         try {
             val dateformat = SimpleDateFormat("dd-MM-yyyy")
             val strdate = "09-3-2022"
