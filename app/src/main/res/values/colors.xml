@@ -37,5 +37,6 @@
     <color name="transparent">#00000000</color>
     <color name="dividerColor">#e0e0e0</color>
     <color name="custom_header_text">#030303</color>
+    <color name="pale_grey">#efeff4</color>
 
 </resources>

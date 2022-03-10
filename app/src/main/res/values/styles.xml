@@ -13,6 +13,8 @@
     </style>
     <style name="CalendarCell.DayHeader">
         <item name="android:textSize">@dimen/calendar_text_small</item>
+        <item name="android:textColor">@color/calendar_selected_day_bg</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="CalendarCell.CalendarDate">

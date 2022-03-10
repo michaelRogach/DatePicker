@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:drawable="@drawable/middle_range" app:tsquare_state_deactivated="true" app:tsquare_state_range_middle="true" />
-    <item android:drawable="@drawable/middle_range" app:tsquare_state_deactivated="false" app:tsquare_state_range_middle="true" />
+    <item android:drawable="@drawable/middle_range" app:tsquare_state_range_middle="true" />
     <item android:drawable="@drawable/selected_highlighted" android:state_selected="true" app:tsquare_state_highlighted="true" app:tsquare_state_range_first="false" app:tsquare_state_range_last="false" />
     <item android:drawable="@drawable/selected" android:state_selected="true" app:tsquare_state_range_first="false" app:tsquare_state_range_last="false" />
     <item android:drawable="@drawable/first_day_in_range_with_badge" android:state_selected="true" app:tsquare_state_highlighted="true" app:tsquare_state_range_first="true" />

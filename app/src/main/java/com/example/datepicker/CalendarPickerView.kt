@@ -173,7 +173,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             return withSelectedDates(listOf(selectedDates))
         }
 
-        private fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
+        fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
             require(!(selectionMode == SelectionMode.SINGLE && selectedDates.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
             require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates.size }
             for (date in selectedDates) {

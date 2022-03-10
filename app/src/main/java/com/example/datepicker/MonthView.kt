@@ -44,7 +44,7 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
         val numberFormatter = NumberFormat.getInstance(locale)
         val numRows = cells.size
         grid?.setNumRows(numRows)
-        for (i in 0..5) {
+        for (i in 0..4) {
             val weekRow = grid?.getChildAt(i + 1) as CalendarRowView
             weekRow.setListener(listener)
             if (i < numRows) {
@@ -177,13 +177,13 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
                 this.locale = locale
             }
             val originalDayOfWeek = today[Calendar.DAY_OF_WEEK]
-            val firstDayOfWeek = today.firstDayOfWeek
-            val headerRow: CalendarRowView = view.grid?.getChildAt(0) as CalendarRowView
-            for (offset in 0..6) {
-                today[Calendar.DAY_OF_WEEK] = getDayOfWeek(firstDayOfWeek, offset, view.isRtl)
-                val textView = headerRow.getChildAt(offset) as TextView
-                textView.text = weekdayNameFormat.format(today.time)
-            }
+//            val firstDayOfWeek = today.firstDayOfWeek
+//            val headerRow: CalendarRowView = view.grid?.getChildAt(0) as CalendarRowView
+//            for (offset in 0..6) {
+//                today[Calendar.DAY_OF_WEEK] = getDayOfWeek(firstDayOfWeek, offset, view.isRtl)
+//                val textView = headerRow.getChildAt(offset) as TextView
+//                textView.text = weekdayNameFormat.format(today.time)
+//            }
             today[Calendar.DAY_OF_WEEK] = originalDayOfWeek
             view.listener = listener
             view.decorators = decorators
