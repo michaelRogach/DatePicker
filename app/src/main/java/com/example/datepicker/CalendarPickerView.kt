@@ -22,28 +22,6 @@ import java.util.*
 class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs) {
     private var subTitles: ArrayList<SubTitle>? = null
 
-    enum class SelectionMode {
-        /**
-         * Only one date will be selectable.  If there is already a selected date and you select a new
-         * one, the old date will be unselected.
-         */
-        SINGLE,
-
-        /**
-         * Multiple dates will be selectable.  Selecting an already-selected date will un-select it.
-         */
-        MULTIPLE,
-
-        /**
-         * Allows you to select a date range.  Previous selections are cleared when you either:
-         *
-         *  * Have a range selected and select another date (even if it's in the current range).
-         *  * Have one date selected and then select an earlier date.
-         *
-         */
-        RANGE
-    }
-
     private val adapter: MonthAdapter?
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
     val listener: MonthView.Listener = CellClickedListener()
@@ -80,6 +58,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var decorators: List<CalendarCellDecorator>? = null
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
+
     fun setDecorators(decorators: List<CalendarCellDecorator>?) {
         this.decorators = decorators
         adapter?.notifyDataSetChanged()
@@ -125,9 +104,9 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         this.monthNameFormat = monthNameFormat
         monthNameFormat.timeZone = timeZone
         weekdayNameFormat = SimpleDateFormat("E", locale)
-        weekdayNameFormat?.setTimeZone(timeZone)
+        weekdayNameFormat?.timeZone = timeZone
         fullDateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale)
-        fullDateFormat?.setTimeZone(timeZone)
+        fullDateFormat?.timeZone = timeZone
         selectionMode = SelectionMode.SINGLE
         // Clear out any previously-selected dates/cells.
         selectedCals.clear()
@@ -138,8 +117,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         // Clear previous state.
         cells.clear()
         months.clear()
-        minCal.setTime(minDate)
-        maxCal.setTime(maxDate)
+        minCal.time = minDate
+        maxCal.time = maxDate
         setMidnight(minCal)
         setMidnight(maxCal)
         displayOnly = false
@@ -149,18 +128,17 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         maxCal.add(Calendar.MILLISECOND, -1)
 
         // Now iterate between minCal and maxCal and build up our list of months to show.
-        monthCounter.setTime(minCal.getTime())
+        monthCounter.time = minCal.time
         val maxMonth = maxCal.get(Calendar.MONTH)
         val maxYear = maxCal.get(Calendar.YEAR)
         while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.
                     || monthCounter.get(Calendar.YEAR) < maxYear) // Up to the year.
             && monthCounter.get(Calendar.YEAR) < maxYear + 1) { // But not > next yr.
-            val date = monthCounter.getTime()
+            val date = monthCounter.time
             val month = MonthDescriptor(
                 monthCounter.get(Calendar.MONTH), monthCounter.get(Calendar.YEAR), date,
                 monthNameFormat.format(date))
             cells[monthKey(month)] = getMonthCells(month, monthCounter)
-//            d("Adding month %s", month)
             months.add(month)
             monthCounter.add(Calendar.MONTH, 1)
         }
@@ -197,7 +175,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
         private fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
             require(!(selectionMode == SelectionMode.SINGLE && selectedDates.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
-            require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates!!.size }
+            require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates.size }
             for (date in selectedDates) {
                 selectDate(date)
             }
@@ -258,7 +236,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     private fun scrollToSelectedMonth(selectedIndex: Int, smoothScroll: Boolean = false) {
         post {
-//            d("Scrolling to position %d", selectedIndex)
             if (smoothScroll) {
                 smoothScrollToPosition(selectedIndex)
             } else {
@@ -371,7 +348,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         get() {
             val selectedDates: MutableList<Date> = ArrayList()
             for (cal in selectedCells) {
-                if (!highlightedCells.contains(cal) && !deactivatedDates.contains(cal!!.date.day + 1)) selectedDates.add(cal.date)
+                if (!highlightedCells.contains(cal) && !deactivatedDates.contains(cal.date.day + 1)) selectedDates.add(cal.date)
             }
             Collections.sort(selectedDates)
             return selectedDates
@@ -422,10 +399,10 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     private fun validateDate(date: Date?) {
         requireNotNull(date) { "Selected date must be non-null." }
-        require(!(date.before(minCal!!.time) || date.after(maxCal!!.time))) {
+        require(!(date.before(minCal.time) || date.after(maxCal.time))) {
             String.format(
                 "SelectedDate must be between minDate and maxDate."
-                        + "%nminDate: %s%nmaxDate: %s%nselectedDate: %s", minCal!!.time, maxCal!!.time,
+                        + "%nminDate: %s%nmaxDate: %s%nselectedDate: %s", minCal.time, maxCal.time,
                 date)
         }
     }
@@ -913,5 +890,27 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             init(Date(), nextYear.time) //
                 .withSelectedDate(Date())
         }
+    }
+
+    enum class SelectionMode {
+        /**
+         * Only one date will be selectable.  If there is already a selected date and you select a new
+         * one, the old date will be unselected.
+         */
+        SINGLE,
+
+        /**
+         * Multiple dates will be selectable.  Selecting an already-selected date will un-select it.
+         */
+        MULTIPLE,
+
+        /**
+         * Allows you to select a date range.  Previous selections are cleared when you either:
+         *
+         *  * Have a range selected and select another date (even if it's in the current range).
+         *  * Have one date selected and then select an earlier date.
+         *
+         */
+        RANGE
     }
 }

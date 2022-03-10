@@ -1,9 +1,9 @@
 package com.example.datepicker
 
-import android.widget.FrameLayout
-import android.widget.TextView
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.FrameLayout
+import android.widget.TextView
 
 class CalendarCellView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     private var isSelectable = false
@@ -48,7 +48,7 @@ class CalendarCellView(context: Context, attrs: AttributeSet) : FrameLayout(cont
     }
 
     fun setRangeState(rangeState: RangeState) {
-        if (this.rangeState !== rangeState) {
+        if (this.rangeState != rangeState) {
             this.rangeState = rangeState
             refreshDrawableState()
         }
@@ -115,12 +115,16 @@ class CalendarCellView(context: Context, attrs: AttributeSet) : FrameLayout(cont
         if (isDeactivated) {
             mergeDrawableStates(drawableState, STATE_DEACTIVATED)
         }
-        if (rangeState === RangeState.FIRST) {
-            mergeDrawableStates(drawableState, STATE_RANGE_FIRST)
-        } else if (rangeState === RangeState.MIDDLE) {
-            mergeDrawableStates(drawableState, STATE_RANGE_MIDDLE)
-        } else if (rangeState === RangeState.LAST) {
-            mergeDrawableStates(drawableState, STATE_RANGE_LAST)
+        when (rangeState) {
+            RangeState.FIRST -> {
+                mergeDrawableStates(drawableState, STATE_RANGE_FIRST)
+            }
+            RangeState.MIDDLE -> {
+                mergeDrawableStates(drawableState, STATE_RANGE_MIDDLE)
+            }
+            RangeState.LAST -> {
+                mergeDrawableStates(drawableState, STATE_RANGE_LAST)
+            }
         }
         return drawableState
     }
