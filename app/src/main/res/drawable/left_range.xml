@@ -1,14 +1,12 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:viewportWidth="48"
     android:viewportHeight="48"
     android:width="48dp"
-    android:height="48dp"
-    android:tint="@color/calendar_highlighted_day_bg">
+    android:height="48dp">
     <path
-        android:pathData="M24 6H48V42H24V6Z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.2" />
+        android:pathData="M24 7H48V41H24V7Z"
+        android:fillColor="#e2f6fb" />
     <path
-        android:pathData="M42 24A18 18 0 0 1 6 24A18 18 0 0 1 42 24Z"
-        android:fillColor="#000000" />
+        android:pathData="M41 24A17 17 0 0 1 7 24A17 17 0 0 1 41 24Z"
+        android:fillColor="#aadfec" />
 </vector>
