@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/alone_range.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/badge.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/calendar_bg_selector.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/calendar_text_selector.xml" value="0.2385" />
+        <entry key="app/src/main/res/drawable/day_text_color.xml" value="0.3285" />
+        <entry key="app/src/main/res/drawable/left_range.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/middle_range.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/middle_range_badge.xml" value="0.3165" />
+        <entry key="app/src/main/res/drawable/right_range.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_range_first.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_range_last.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_range_middle.xml" value="0.3285" />
+        <entry key="app/src/main/res/drawable/state_range_middle_deactivated.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_range_middle_unavailable.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_selected.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/state_unavailable.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_sample.xml" value="0.19327731092436976" />
+        <entry key="app/src/main/res/layout/month.xml" value="0.2994791666666667" />
+        <entry key="app/src/main/res/layout/week.xml" value="0.5515625" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
