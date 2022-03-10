@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/alone_range.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/alone_range_highlighted.xml" value="0.171" />
         <entry key="app/src/main/res/drawable/badge.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/calendar_bg_selector.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/calendar_text_selector.xml" value="0.2385" />
@@ -13,6 +14,7 @@
         <entry key="app/src/main/res/drawable/middle_range.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/middle_range_badge.xml" value="0.3165" />
         <entry key="app/src/main/res/drawable/right_range.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/right_range_badge.xml" value="0.197" />
         <entry key="app/src/main/res/drawable/state_range_first.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/state_range_first_badge.xml" value="0.3165" />
         <entry key="app/src/main/res/drawable/state_range_last.xml" value="0.1" />

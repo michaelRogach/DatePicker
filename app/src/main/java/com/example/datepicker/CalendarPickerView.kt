@@ -1,21 +1,19 @@
 package com.example.datepicker
 
-import android.view.ViewGroup
-import android.graphics.Typeface
-import androidx.recyclerview.widget.RecyclerView
-import android.annotation.TargetApi
-import android.os.Build
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.Context
-import kotlin.jvm.JvmOverloads
-import com.example.datepicker.CalendarPickerView.MonthAdapter.MyHolder
-import android.view.LayoutInflater
+import android.graphics.Typeface
+import android.os.Build
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SnapHelper
 import androidx.recyclerview.widget.LinearSnapHelper
-import java.lang.IllegalStateException
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
+import com.example.datepicker.CalendarPickerView.MonthAdapter.MyHolder
 import java.text.DateFormat
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -384,9 +382,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private inner class CellClickedListener : MonthView.Listener {
         override fun handleClick(cell: MonthCellDescriptor?) {
             val clickedDate = cell!!.date
-            if (highlightedCells.contains(cell)) {
-                return
-            }
             val calendar = Calendar.getInstance()
             calendar.time = clickedDate
             val day = calendar[Calendar.DAY_OF_WEEK]

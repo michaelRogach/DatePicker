@@ -2,9 +2,8 @@
     android:viewportWidth="48"
     android:viewportHeight="48"
     android:width="48dp"
-    android:height="48dp"
-    android:tint="@color/calendar_selected_day_bg">
+    android:height="48dp">
     <path
         android:pathData="M41 24A17 17 0 0 1 7 24A17 17 0 0 1 41 24Z"
-        android:fillColor="#000000" />
+        android:fillColor="#aadfec" />
 </vector>
