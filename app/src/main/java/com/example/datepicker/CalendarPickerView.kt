@@ -26,11 +26,11 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
     val listener: MonthView.Listener = CellClickedListener()
     val months: MutableList<MonthDescriptor> = ArrayList()
-    val selectedCells: MutableList<MonthCellDescriptor> = ArrayList()
-    val highlightedCells: MutableList<MonthCellDescriptor> = ArrayList()
-    val selectedCals: MutableList<Calendar> = ArrayList()
-    val highlightedCals: MutableList<Calendar> = ArrayList()
-    var deactivatedDates = ArrayList<Int>()
+    private val selectedCells = mutableListOf<MonthCellDescriptor>()
+    private val highlightedCells = mutableListOf<MonthCellDescriptor>()
+    private val selectedCals = mutableListOf<Calendar>()
+    private val highlightedCals = mutableListOf<Calendar>()
+    private var deactivatedDates = ArrayList<Int>()
     private var locale: Locale
     private var timeZone: TimeZone
     private var monthNameFormat: DateFormat? = null
@@ -350,7 +350,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             for (cal in selectedCells) {
                 if (!highlightedCells.contains(cal) && !deactivatedDates.contains(cal.date.day + 1)) selectedDates.add(cal.date)
             }
-            Collections.sort(selectedDates)
+            selectedDates.sort()
             return selectedDates
         }
 
@@ -372,11 +372,11 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                 }
             } else {
                 val wasSelected = doSelectDate(clickedDate, cell)
-                if (dateListener != null) {
+                dateListener?.let {
                     if (wasSelected) {
-                        dateListener!!.onDateSelected(clickedDate)
+                        it.onDateSelected(clickedDate)
                     } else {
-                        dateListener!!.onDateUnselected(clickedDate)
+                        it.onDateUnselected(clickedDate)
                     }
                 }
             }
@@ -810,20 +810,18 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             return false
         }
 
-        private fun minDate(selectedCals: List<Calendar>?): Calendar? {
-            if (selectedCals == null || selectedCals.size == 0) {
+        private fun minDate(selectedCals: List<Calendar>): Calendar? {
+            if (selectedCals.isEmpty()) {
                 return null
             }
-            Collections.sort(selectedCals)
-            return selectedCals[0]
+            return selectedCals.sorted()[0]
         }
 
-        private fun maxDate(selectedCals: List<Calendar>?): Calendar? {
-            if (selectedCals == null || selectedCals.size == 0) {
+        private fun maxDate(selectedCals: List<Calendar>): Calendar? {
+            if (selectedCals.isEmpty()) {
                 return null
             }
-            Collections.sort(selectedCals)
-            return selectedCals[selectedCals.size - 1]
+            return selectedCals.sorted()[selectedCals.size - 1]
         }
 
         private fun sameDate(cal: Calendar?, selectedDate: Calendar?): Boolean {
