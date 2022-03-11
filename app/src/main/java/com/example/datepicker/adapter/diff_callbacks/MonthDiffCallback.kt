@@ -21,16 +21,7 @@ class MonthDiffCallback : DiffUtil.ItemCallback<MonthDH>() {
 
     override fun areContentsTheSame(oldItem: MonthDH, newItem: MonthDH): Boolean {
         return equalObjects(oldItem.month, newItem.month) &&
-                equalObjects(oldItem.today, newItem.today) &&
-                equalObjects(oldItem.dividerColor, newItem.dividerColor) &&
-                equalObjects(oldItem.dayBackgroundResId, newItem.dayBackgroundResId) &&
-                equalObjects(oldItem.dayTextColorResId, newItem.dayTextColorResId) &&
-                equalObjects(oldItem.titleTextColor, newItem.titleTextColor) &&
-                equalObjects(oldItem.displayHeader, newItem.displayHeader) &&
-                equalObjects(oldItem.headerTextColor, newItem.headerTextColor) &&
-                equalObjects(oldItem.decorators, newItem.decorators) &&
-                equalObjects(oldItem.locale, newItem.locale) &&
-                equalObjects(oldItem.adapter, newItem.adapter)
+                equalObjects(oldItem.cells, newItem.cells)
     }
 
     override fun getChangePayload(oldItem: MonthDH, newItem: MonthDH): MutableSet<String> {

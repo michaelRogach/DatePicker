@@ -39,7 +39,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     lateinit var monthCounter: Calendar
     private var displayOnly = false
     var selectionMode: SelectionMode? = null
-    lateinit var today: Calendar
+    private var today = Calendar.getInstance()
     private val dividerColor: Int
     private val dayBackgroundResId: Int
     private val dayTextColorResId: Int
@@ -95,7 +95,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         // Make sure that all calendar instances use the same time zone and locale.
         this.timeZone = timeZone
         this.locale = locale
-        today = Calendar.getInstance(timeZone, locale)
         minCal = Calendar.getInstance(timeZone, locale)
         maxCal = Calendar.getInstance(timeZone, locale)
         monthCounter = Calendar.getInstance(timeZone, locale)
@@ -145,9 +144,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             MonthDH(
                 monthDescriptor,
                 cells.getValueAtIndex(index)!!,
-                today, dividerColor,
-                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-                headerTextColor, decorators, locale, dayViewAdapter,
                 displayOnly, titleTypeface, dateTypeface, deactivatedDates
             )
         }
@@ -160,16 +156,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         return init(minDate, maxDate, TimeZone.getDefault(), Locale.getDefault(), SimpleDateFormat("MMMM", Locale.getDefault()))
     }
 
-    fun init(minDate: Date?, maxDate: Date?, timeZone: TimeZone?): FluentInitializer {
-        return init(minDate, maxDate, timeZone, Locale.getDefault(), SimpleDateFormat("MMMM", Locale.getDefault()))
-    }
-
     fun init(minDate: Date?, maxDate: Date?, monthNameFormat: DateFormat): FluentInitializer {
         return init(minDate, maxDate, TimeZone.getDefault(), Locale.getDefault(), monthNameFormat)
-    }
-
-    fun init(minDate: Date?, maxDate: Date?, locale: Locale?): FluentInitializer {
-        return init(minDate, maxDate, TimeZone.getDefault(), locale, SimpleDateFormat("MMMM", locale))
     }
 
     inner class FluentInitializer {
@@ -607,41 +595,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         return null
     }
 
-//    private inner class MonthAdapter : Adapter<MonthAdapter.MyHolder>() {
-//        private val inflater: LayoutInflater = LayoutInflater.from(context)
-//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
-//            val view = MonthView.create(
-//                parent, inflater, weekdayNameFormat!!, listener, today, dividerColor,
-//                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-//                headerTextColor, decorators, locale, dayViewAdapter)
-//            view.setTag(R.id.day_view_adapter_class, dayViewAdapter)
-//            return MyHolder(view)
-//        }
-//
-//        override fun onBindViewHolder(holder: MyHolder, position: Int) {
-//            var position = position
-//            val view = holder.itemView as MonthView
-//            view.setDecorators(decorators)
-//            if (monthsReverseOrder) {
-//                position = months.size - position - 1
-//            }
-//            view.init(
-//                months[position], cells.getValueAtIndex(position)!!, displayOnly,
-//                titleTypeface, dateTypeface, deactivatedDates, subTitles)
-//        }
-//
-//        override fun getItemId(position: Int): Long {
-//            return position.toLong()
-//        }
-//
-//        override fun getItemCount(): Int {
-//            return months.size
-//        }
-//
-//        inner class MyHolder(itemView: View) : ViewHolder(itemView)
-//
-//    }
-
     private fun getMonthCells(month: MonthDescriptor, startCal: Calendar?): List<List<MonthCellDescriptor>> {
         val cal = Calendar.getInstance(timeZone, locale)
         cal.time = startCal!!.time
@@ -879,7 +832,12 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             res.getColor(R.color.dateTimeRangePickerHeaderTextColor))
         orientation = a.getBoolean(R.styleable.CalendarPickerView_tsquare_orientation_horizontal, false)
         a.recycle()
-        adapter = MonthAdapter()
+        adapter = MonthAdapter(
+            MonthView.StyleData(
+                today, dividerColor,
+                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
+                headerTextColor, decorators, Locale.getDefault(), dayViewAdapter,
+            ))
         locale = Locale.getDefault()
         var layoutManager: LinearLayoutManager
 //        val gridDecorator = GridSpaceItemDecoration(20)

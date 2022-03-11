@@ -197,10 +197,41 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
             } else dayOfWeek
         }
 
-        fun isRtl(locale: Locale): Boolean {
+        private fun isRtl(locale: Locale): Boolean {
             // TODO convert the build to gradle and use getLayoutDirection instead of this (on 17+)?
             val directionality = Character.getDirectionality(locale.getDisplayName(locale)[0]).toInt()
             return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT.toInt() || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC.toInt()
         }
     }
+
+    fun setUpView(styleData: StyleData) {
+        setDividerColor(styleData.dividerColor)
+        setDayTextColor(styleData.dayTextColorResId)
+        setTitleTextColor(styleData.titleTextColor)
+        setDisplayHeader(styleData.displayHeader)
+        setHeaderTextColor(styleData.headerTextColor)
+        if (styleData.dayBackgroundResId != 0) {
+            setDayBackground(styleData.dayBackgroundResId)
+        }
+        isRtl = isRtl(styleData.locale)
+        this.locale = styleData.locale
+
+        val originalDayOfWeek = styleData.today[Calendar.DAY_OF_WEEK]
+        styleData.today[Calendar.DAY_OF_WEEK] = originalDayOfWeek
+//            listener = data.listener
+        setDecorators(styleData.decorators)
+    }
+
+    data class StyleData(
+        val today: Calendar,
+        val dividerColor: Int,
+        val dayBackgroundResId: Int,
+        val dayTextColorResId: Int,
+        val titleTextColor: Int,
+        val displayHeader: Boolean,
+        val headerTextColor: Int,
+        val decorators: List<CalendarCellDecorator>?,
+        val locale: Locale,
+        val adapter: DayViewAdapter
+    )
 }

@@ -8,7 +8,7 @@ import com.example.datepicker.adapter.data_holders.MonthDH
 import com.example.datepicker.adapter.diff_callbacks.MonthsCallback
 import com.example.datepicker.adapter.view_holders.MonthVH
 
-class MonthAdapter() : DiffAdapter<DiffVH<Any>, Any>(MonthsCallback()) {
+class MonthAdapter(private val styleData: MonthView.StyleData) : DiffAdapter<DiffVH<Any>, Any>(MonthsCallback()) {
 
     companion object {
         const val TYPE_SECTION_HEADER = 1
@@ -36,6 +36,7 @@ class MonthAdapter() : DiffAdapter<DiffVH<Any>, Any>(MonthsCallback()) {
                 val monthView = rootView as MonthView
                 monthView.apply {
                     setDayViewAdapter(DefaultDayViewAdapter())
+                    setUpView(styleData)
                 }
                 MonthVH(rootView)
             }
