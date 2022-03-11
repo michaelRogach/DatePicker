@@ -6,14 +6,12 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Build
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.example.datepicker.CalendarPickerView.MonthAdapter.MyHolder
+import com.example.datepicker.adapter.MonthAdapter
+import com.example.datepicker.adapter.data_holders.MonthDH
 import java.text.DateFormat
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -142,6 +140,18 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             months.add(month)
             monthCounter.add(Calendar.MONTH, 1)
         }
+
+        val items = months.mapIndexed { index, monthDescriptor ->
+            MonthDH(
+                monthDescriptor,
+                cells.getValueAtIndex(index)!!,
+                today, dividerColor,
+                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
+                headerTextColor, decorators, locale, dayViewAdapter,
+                displayOnly, titleTypeface, dateTypeface, deactivatedDates
+            )
+        }
+        adapter?.submitList(items)
         validateAndUpdate()
         return FluentInitializer()
     }
@@ -597,40 +607,40 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         return null
     }
 
-    private inner class MonthAdapter : Adapter<MyHolder>() {
-        private val inflater: LayoutInflater = LayoutInflater.from(context)
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
-            val view = MonthView.create(
-                parent, inflater, weekdayNameFormat!!, listener, today, dividerColor,
-                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-                headerTextColor, decorators, locale, dayViewAdapter)
-            view.setTag(R.id.day_view_adapter_class, dayViewAdapter)
-            return MyHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: MyHolder, position: Int) {
-            var position = position
-            val view = holder.itemView as MonthView
-            view.setDecorators(decorators)
-            if (monthsReverseOrder) {
-                position = months.size - position - 1
-            }
-            view.init(
-                months[position], cells.getValueAtIndex(position)!!, displayOnly,
-                titleTypeface, dateTypeface, deactivatedDates, subTitles)
-        }
-
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
-
-        override fun getItemCount(): Int {
-            return months.size
-        }
-
-        inner class MyHolder(itemView: View) : ViewHolder(itemView)
-
-    }
+//    private inner class MonthAdapter : Adapter<MonthAdapter.MyHolder>() {
+//        private val inflater: LayoutInflater = LayoutInflater.from(context)
+//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
+//            val view = MonthView.create(
+//                parent, inflater, weekdayNameFormat!!, listener, today, dividerColor,
+//                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
+//                headerTextColor, decorators, locale, dayViewAdapter)
+//            view.setTag(R.id.day_view_adapter_class, dayViewAdapter)
+//            return MyHolder(view)
+//        }
+//
+//        override fun onBindViewHolder(holder: MyHolder, position: Int) {
+//            var position = position
+//            val view = holder.itemView as MonthView
+//            view.setDecorators(decorators)
+//            if (monthsReverseOrder) {
+//                position = months.size - position - 1
+//            }
+//            view.init(
+//                months[position], cells.getValueAtIndex(position)!!, displayOnly,
+//                titleTypeface, dateTypeface, deactivatedDates, subTitles)
+//        }
+//
+//        override fun getItemId(position: Int): Long {
+//            return position.toLong()
+//        }
+//
+//        override fun getItemCount(): Int {
+//            return months.size
+//        }
+//
+//        inner class MyHolder(itemView: View) : ViewHolder(itemView)
+//
+//    }
 
     private fun getMonthCells(month: MonthDescriptor, startCal: Calendar?): List<List<MonthCellDescriptor>> {
         val cal = Calendar.getInstance(timeZone, locale)
@@ -870,7 +880,10 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         orientation = a.getBoolean(R.styleable.CalendarPickerView_tsquare_orientation_horizontal, false)
         a.recycle()
         adapter = MonthAdapter()
+        locale = Locale.getDefault()
         var layoutManager: LinearLayoutManager
+//        val gridDecorator = GridSpaceItemDecoration(20)
+//        addItemDecoration(gridDecorator)
         if (!orientation) {
             layoutManager = LinearLayoutManager(getContext(), VERTICAL, monthsReverseOrder)
         } else {
@@ -881,7 +894,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         setLayoutManager(layoutManager)
         setBackgroundColor(bg)
         timeZone = TimeZone.getDefault()
-        locale = Locale.getDefault()
         if (isInEditMode) {
             val nextYear = Calendar.getInstance(timeZone, locale)
             nextYear.add(Calendar.YEAR, 1)

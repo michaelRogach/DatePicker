@@ -15,10 +15,10 @@ import java.util.*
 class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     var title: TextView? = null
     var grid: CalendarGridView? = null
-    private var listener: Listener? = null
+    var listener: Listener? = null
     private var decorators: List<CalendarCellDecorator>? = null
-    private var isRtl = false
-    private var locale: Locale? = null
+    var isRtl = false
+    var locale: Locale? = null
     var deactivatedDates: ArrayList<Int>? = null
     fun setDecorators(decorators: List<CalendarCellDecorator>?) {
         this.decorators = decorators
@@ -197,7 +197,7 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
             } else dayOfWeek
         }
 
-        private fun isRtl(locale: Locale): Boolean {
+        fun isRtl(locale: Locale): Boolean {
             // TODO convert the build to gradle and use getLayoutDirection instead of this (on 17+)?
             val directionality = Character.getDirectionality(locale.getDisplayName(locale)[0]).toInt()
             return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT.toInt() || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC.toInt()
