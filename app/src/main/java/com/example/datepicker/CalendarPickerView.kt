@@ -1,10 +1,8 @@
 package com.example.datepicker
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Typeface
-import android.os.Build
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -28,8 +26,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private val selectedCals = mutableListOf<Calendar>()
     private val highlightedCals = mutableListOf<Calendar>()
     private var deactivatedDates = ArrayList<Int>()
-    private var locale: Locale
-    private var timeZone: TimeZone
+    private var locale = Locale.getDefault()
+    private var timeZone = TimeZone.getDefault()
     private var monthNameFormat: DateFormat? = null
     private var weekdayNameFormat: DateFormat? = null
     private var fullDateFormat: DateFormat? = null
@@ -83,9 +81,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             MonthView.StyleData(
                 today, dividerColor,
                 dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-                headerTextColor, Locale.getDefault(), dayViewAdapter,
+                headerTextColor, locale, dayViewAdapter,
             ))
-        locale = Locale.getDefault()
         var layoutManager: LinearLayoutManager
 //        val gridDecorator = GridSpaceItemDecoration(20)
 //        addItemDecoration(gridDecorator)
@@ -98,11 +95,10 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         }
         setLayoutManager(layoutManager)
         setBackgroundColor(bg)
-        timeZone = TimeZone.getDefault()
         if (isInEditMode) {
             val nextYear = Calendar.getInstance(timeZone, locale)
             nextYear.add(Calendar.YEAR, 1)
-            init(Date(), nextYear.time) //
+            init(Date(), nextYear.time, SimpleDateFormat("MMMM", Locale.getDefault()))
                 .withSelectedDate(Date())
         }
     }
@@ -126,16 +122,12 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
      * @param minDate Earliest selectable date, inclusive.  Must be earlier than `maxDate`.
      * @param maxDate Latest selectable date, exclusive.  Must be later than `minDate`.
      */
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    fun init(minDate: Date?, maxDate: Date?, timeZone: TimeZone?, locale: Locale?, monthNameFormat: DateFormat): FluentInitializer {
+
+    fun init(minDate: Date?, maxDate: Date?, monthNameFormat: DateFormat): FluentInitializer {
         require(!(minDate == null || maxDate == null)) { "minDate and maxDate must be non-null.  " + dbg(minDate, maxDate) }
         require(!minDate.after(maxDate)) { "minDate must be before maxDate.  " + dbg(minDate, maxDate) }
-        requireNotNull(locale) { "Locale is null." }
-        requireNotNull(timeZone) { "Time zone is null." }
 
-        // Make sure that all calendar instances use the same time zone and locale.
-        this.timeZone = timeZone
-        this.locale = locale
+
         minCal = Calendar.getInstance(timeZone, locale)
         maxCal = Calendar.getInstance(timeZone, locale)
         monthCounter = Calendar.getInstance(timeZone, locale)
@@ -191,14 +183,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         adapter?.submitList(items)
         validateAndUpdate()
         return FluentInitializer()
-    }
-
-    fun init(minDate: Date?, maxDate: Date?): FluentInitializer {
-        return init(minDate, maxDate, TimeZone.getDefault(), Locale.getDefault(), SimpleDateFormat("MMMM", Locale.getDefault()))
-    }
-
-    fun init(minDate: Date?, maxDate: Date?, monthNameFormat: DateFormat): FluentInitializer {
-        return init(minDate, maxDate, TimeZone.getDefault(), Locale.getDefault(), monthNameFormat)
     }
 
     private fun validateAndUpdate() {
