@@ -143,7 +143,7 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
 
         val originalDayOfWeek = styleData.today[Calendar.DAY_OF_WEEK]
         styleData.today[Calendar.DAY_OF_WEEK] = originalDayOfWeek
-//            listener = data.listener
+        listener = styleData.listener
     }
 
     data class StyleData(
@@ -155,6 +155,7 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
         val displayHeader: Boolean,
         val headerTextColor: Int,
         val locale: Locale,
-        val adapter: DayViewAdapter
+        val adapter: DayViewAdapter,
+        val listener: Listener
     )
 }

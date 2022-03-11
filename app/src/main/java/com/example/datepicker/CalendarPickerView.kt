@@ -19,7 +19,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     private val adapter: MonthAdapter?
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
-    val listener: MonthView.Listener = CellClickedListener()
     private val months: MutableList<MonthDescriptor> = ArrayList()
     private val selectedCells = mutableListOf<MonthCellDescriptor>()
     private val highlightedCells = mutableListOf<MonthCellDescriptor>()
@@ -49,9 +48,32 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var dateListener: OnDateSelectedListener? = null
     private var dateConfiguredListener: DateSelectableFilter? = null
     private var invalidDateListener: OnInvalidDateSelectedListener? = DefaultOnInvalidDateSelectedListener()
-    private var cellClickInterceptor: CellClickInterceptor? = null
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
+
+    private val cellClickedListener = object : MonthView.Listener {
+        override fun handleClick(cell: MonthCellDescriptor?) {
+            val clickedDate = cell?.date ?: return
+            val calendar = Calendar.getInstance()
+            calendar.time = clickedDate
+            val day = calendar[Calendar.DAY_OF_WEEK]
+            if (deactivatedDates.contains(day)) {
+                return
+            }
+            if (betweenDates(clickedDate, minCal, maxCal).not() || isDateSelectable(clickedDate).not()) {
+                invalidDateListener?.onInvalidDateSelected(clickedDate)
+            } else {
+                val wasSelected = doSelectDate(clickedDate, cell)
+                dateListener?.let {
+                    if (wasSelected) {
+                        it.onDateSelected(clickedDate)
+                    } else {
+                        it.onDateUnselected(clickedDate)
+                    }
+                }
+            }
+        }
+    }
 
     init {
         val res = context.resources
@@ -77,12 +99,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             res.getColor(R.color.dateTimeRangePickerHeaderTextColor))
         orientation = a.getBoolean(R.styleable.CalendarPickerView_tsquare_orientation_horizontal, false)
         a.recycle()
-        adapter = MonthAdapter(
-            MonthView.StyleData(
-                today, dividerColor,
-                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-                headerTextColor, locale, dayViewAdapter,
-            ))
+        adapter = MonthAdapter(prepareStyleData())
         var layoutManager: LinearLayoutManager
 //        val gridDecorator = GridSpaceItemDecoration(20)
 //        addItemDecoration(gridDecorator)
@@ -312,33 +329,12 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             return selectedDates
         }
 
-    private inner class CellClickedListener : MonthView.Listener {
-        override fun handleClick(cell: MonthCellDescriptor?) {
-            val clickedDate = cell?.date ?: return
-            val calendar = Calendar.getInstance()
-            calendar.time = clickedDate
-            val day = calendar[Calendar.DAY_OF_WEEK]
-            if (deactivatedDates.contains(day)) {
-                return
-            }
-            if (cellClickInterceptor != null && cellClickInterceptor!!.onCellClicked(clickedDate)) {
-                return
-            }
-            if (!betweenDates(clickedDate, minCal, maxCal) || !isDateSelectable(clickedDate)) {
-                if (invalidDateListener != null) {
-                    invalidDateListener!!.onInvalidDateSelected(clickedDate)
-                }
-            } else {
-                val wasSelected = doSelectDate(clickedDate, cell)
-                dateListener?.let {
-                    if (wasSelected) {
-                        it.onDateSelected(clickedDate)
-                    } else {
-                        it.onDateUnselected(clickedDate)
-                    }
-                }
-            }
-        }
+    private fun prepareStyleData() : MonthView.StyleData {
+        return MonthView.StyleData(
+            today, dividerColor,
+            dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
+            headerTextColor, locale, dayViewAdapter, cellClickedListener,
+        )
     }
 
     @JvmOverloads
@@ -649,13 +645,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     fun setCustomDayView(dayViewAdapter: DayViewAdapter) {
         this.dayViewAdapter = dayViewAdapter
         adapter?.notifyDataSetChanged()
-    }
-
-    /**
-     * Set a listener to intercept clicks on calendar cells.
-     */
-    fun setCellClickInterceptor(listener: CellClickInterceptor?) {
-        cellClickInterceptor = listener
     }
 
     /**

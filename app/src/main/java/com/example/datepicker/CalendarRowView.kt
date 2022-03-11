@@ -68,9 +68,7 @@ class CalendarRowView(context: Context?, attrs: AttributeSet?) : ViewGroup(conte
 
     override fun onClick(v: View) {
         // Header rows don't have a click listener
-        if (listener != null) {
-            listener?.handleClick(v.tag as MonthCellDescriptor)
-        }
+        listener?.handleClick(v.tag as MonthCellDescriptor)
     }
 
     fun setListener(listener: MonthView.Listener?) {
