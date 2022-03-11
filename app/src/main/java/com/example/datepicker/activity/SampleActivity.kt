@@ -59,7 +59,7 @@ class SampleActivity : AppCompatActivity() {
             .inMode(CalendarPickerView.SelectionMode.RANGE)
             .withHighlightedDates(arrayList)
             .withSelectedDates(selected)
-        calendar.scrollToDate(Date())
+//        calendar.scrollToDate(Date())
 //        button.setOnClickListener(View.OnClickListener {
 //            Toast.makeText(this@SampleActivity, "list " + calendar.selectedDates.toString(), Toast.LENGTH_LONG).show()
 //        })
