@@ -14,15 +14,9 @@ class CalendarCellView(context: Context, attrs: AttributeSet) : FrameLayout(cont
     private var isDeactivated = false
     private var rangeState = RangeState.NONE
 
-    //textView.setTextSize(8);
     var dayOfMonthTextView: TextView? = null
         get() {
             checkNotNull(field) { "You have to setDayOfMonthTextView in your custom DayViewAdapter." }
-            return field
-        }
-    var subTitleTextView: TextView? = null
-        get() {
-            checkNotNull(field) { "You have to setSubTitleTextView in your custom DayViewAdapter." }
             return field
         }
 

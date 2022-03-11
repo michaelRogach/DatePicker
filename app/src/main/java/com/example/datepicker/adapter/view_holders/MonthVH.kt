@@ -14,12 +14,6 @@ class MonthVH(containerView: View) : DiffVH<MonthDH>(containerView) {
 
     override fun render(data: MonthDH, payloads: Set<String>) {
         renderView(data)
-//        payloads.forEach {
-//            renderView(data)
-//            when (it) {
-//                CompletedJobsDiffCallback.DIFF_STORE_NAME -> renderStoreName()
-//            }
-//        }
     }
 
     private fun renderView(data: MonthDH) {
@@ -27,7 +21,7 @@ class MonthVH(containerView: View) : DiffVH<MonthDH>(containerView) {
 
         monthView.init(
             data.month, data.cells, data.displayOnly,
-            data.titleTypeface, data.dateTypeface, data.deactivatedDates, arrayListOf())
+            data.titleTypeface, data.dateTypeface, data.deactivatedDates)
 
     }
 }

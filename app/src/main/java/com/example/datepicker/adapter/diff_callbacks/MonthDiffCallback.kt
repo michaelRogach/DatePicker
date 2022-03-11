@@ -21,23 +21,14 @@ class MonthDiffCallback : DiffUtil.ItemCallback<MonthDH>() {
 
     override fun areContentsTheSame(oldItem: MonthDH, newItem: MonthDH): Boolean {
         return equalObjects(oldItem.month, newItem.month) &&
-                equalObjects(oldItem.cells, newItem.cells)
+                equalObjects(oldItem.cells, newItem.cells) &&
+                equalObjects(oldItem.displayOnly, newItem.displayOnly) &&
+                equalObjects(oldItem.titleTypeface, newItem.titleTypeface) &&
+                equalObjects(oldItem.dateTypeface, newItem.dateTypeface) &&
+                equalObjects(oldItem.deactivatedDates, newItem.deactivatedDates)
     }
 
     override fun getChangePayload(oldItem: MonthDH, newItem: MonthDH): MutableSet<String> {
-        val diffs = mutableSetOf<String>()
-
-//        if (notEqualObjects(oldItem.storeName, newItem.storeName))
-//            diffs.add(DIFF_STORE_NAME)
-//        if (notEqualObjects(oldItem.payment, newItem.payment))
-//            diffs.add(DIFF_PAYMENT)
-//        if (notEqualObjects(oldItem.jobParams, newItem.jobParams))
-//            diffs.add(DIFF_PARAMS)
-//        if (notEqualObjects(oldItem.status, newItem.status))
-//            diffs.add(DIFF_STATUS)
-//        if (notEqualObjects(oldItem.iconRes, newItem.iconRes))
-//            diffs.add(DIFF_TYPE_ICON)
-
-        return diffs
+        return mutableSetOf<String>()
     }
 }

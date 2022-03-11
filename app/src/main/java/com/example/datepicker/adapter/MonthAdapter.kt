@@ -1,7 +1,6 @@
 package com.example.datepicker.adapter
 
 import android.view.View
-import com.example.datepicker.DefaultDayViewAdapter
 import com.example.datepicker.MonthView
 import com.example.datepicker.R
 import com.example.datepicker.adapter.data_holders.MonthDH
@@ -35,7 +34,7 @@ class MonthAdapter(private val styleData: MonthView.StyleData) : DiffAdapter<Dif
             TYPE_MONTH -> {
                 val monthView = rootView as MonthView
                 monthView.apply {
-                    setDayViewAdapter(DefaultDayViewAdapter())
+                    setDayViewAdapter(styleData.adapter)
                     setUpView(styleData)
                 }
                 MonthVH(rootView)

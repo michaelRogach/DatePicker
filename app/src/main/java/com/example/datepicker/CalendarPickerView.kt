@@ -18,12 +18,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs) {
-    private var subTitles: ArrayList<SubTitle>? = null
 
     private val adapter: MonthAdapter?
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
     val listener: MonthView.Listener = CellClickedListener()
-    val months: MutableList<MonthDescriptor> = ArrayList()
+    private val months: MutableList<MonthDescriptor> = ArrayList()
     private val selectedCells = mutableListOf<MonthCellDescriptor>()
     private val highlightedCells = mutableListOf<MonthCellDescriptor>()
     private val selectedCals = mutableListOf<Calendar>()
@@ -53,17 +52,59 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var dateConfiguredListener: DateSelectableFilter? = null
     private var invalidDateListener: OnInvalidDateSelectedListener? = DefaultOnInvalidDateSelectedListener()
     private var cellClickInterceptor: CellClickInterceptor? = null
-    private var decorators: List<CalendarCellDecorator>? = null
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
 
-    fun setDecorators(decorators: List<CalendarCellDecorator>?) {
-        this.decorators = decorators
-        adapter?.notifyDataSetChanged()
-    }
-
-    fun getDecorators(): List<CalendarCellDecorator>? {
-        return decorators
+    init {
+        val res = context.resources
+        val a = context.obtainStyledAttributes(attrs, R.styleable.CalendarPickerView)
+        val bg = a.getColor(
+            R.styleable.CalendarPickerView_android_background,
+            res.getColor(R.color.calendar_bg))
+        dividerColor = a.getColor(
+            R.styleable.CalendarPickerView_tsquare_dividerColor,
+            res.getColor(R.color.calendar_divider))
+        dayBackgroundResId = a.getResourceId(
+            R.styleable.CalendarPickerView_tsquare_dayBackground,
+            R.drawable.calendar_bg_selector)
+        dayTextColorResId = a.getResourceId(
+            R.styleable.CalendarPickerView_tsquare_dayTextColor,
+            R.drawable.day_text_color)
+        titleTextColor = a.getColor(
+            R.styleable.CalendarPickerView_tsquare_titleTextColor,
+            res.getColor(R.color.dateTimeRangePickerTitleTextColor))
+        displayHeader = a.getBoolean(R.styleable.CalendarPickerView_tsquare_displayHeader, true)
+        headerTextColor = a.getColor(
+            R.styleable.CalendarPickerView_tsquare_headerTextColor,
+            res.getColor(R.color.dateTimeRangePickerHeaderTextColor))
+        orientation = a.getBoolean(R.styleable.CalendarPickerView_tsquare_orientation_horizontal, false)
+        a.recycle()
+        adapter = MonthAdapter(
+            MonthView.StyleData(
+                today, dividerColor,
+                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
+                headerTextColor, Locale.getDefault(), dayViewAdapter,
+            ))
+        locale = Locale.getDefault()
+        var layoutManager: LinearLayoutManager
+//        val gridDecorator = GridSpaceItemDecoration(20)
+//        addItemDecoration(gridDecorator)
+        if (!orientation) {
+            layoutManager = LinearLayoutManager(getContext(), VERTICAL, monthsReverseOrder)
+        } else {
+            layoutManager = LinearLayoutManager(getContext(), HORIZONTAL, monthsReverseOrder)
+            val snapHelper: SnapHelper = LinearSnapHelper()
+            snapHelper.attachToRecyclerView(this)
+        }
+        setLayoutManager(layoutManager)
+        setBackgroundColor(bg)
+        timeZone = TimeZone.getDefault()
+        if (isInEditMode) {
+            val nextYear = Calendar.getInstance(timeZone, locale)
+            nextYear.add(Calendar.YEAR, 1)
+            init(Date(), nextYear.time) //
+                .withSelectedDate(Date())
+        }
     }
 
     /**
@@ -158,71 +199,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     fun init(minDate: Date?, maxDate: Date?, monthNameFormat: DateFormat): FluentInitializer {
         return init(minDate, maxDate, TimeZone.getDefault(), Locale.getDefault(), monthNameFormat)
-    }
-
-    inner class FluentInitializer {
-        fun inMode(mode: SelectionMode?): FluentInitializer {
-            selectionMode = mode
-            validateAndUpdate()
-            return this
-        }
-
-        fun withSelectedDate(selectedDates: Date): FluentInitializer {
-            return withSelectedDates(listOf(selectedDates))
-        }
-
-        fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
-            require(!(selectionMode == SelectionMode.SINGLE && selectedDates.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
-            require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates.size }
-            for (date in selectedDates) {
-                selectDate(date)
-            }
-            scrollToSelectedDates()
-            validateAndUpdate()
-            return this
-        }
-
-        fun withHighlightedDates(dates: Collection<Date>): FluentInitializer {
-            highlightDates(dates)
-            return this
-        }
-
-        fun withHighlightedDate(date: Date): FluentInitializer {
-            return withHighlightedDates(listOf(date))
-        }
-
-        @SuppressLint("SimpleDateFormat")
-        fun setShortWeekdays(newShortWeekdays: Array<String?>?): FluentInitializer {
-            val symbols = DateFormatSymbols(locale)
-            symbols.shortWeekdays = newShortWeekdays
-            weekdayNameFormat = SimpleDateFormat("E", symbols)
-            return this
-        }
-
-        fun displayOnly(): FluentInitializer {
-            displayOnly = true
-            return this
-        }
-
-        fun withMonthsReverseOrder(monthsRevOrder: Boolean): FluentInitializer {
-            monthsReverseOrder = monthsRevOrder
-            return this
-        }
-
-        fun withDeactivateDates(deactivateDates: ArrayList<Int>): FluentInitializer {
-            deactivateDates(deactivateDates)
-            return this
-        }
-
-        fun withSubTitles(subTitles: ArrayList<SubTitle>): FluentInitializer {
-            setSubTitles(subTitles)
-            return this
-        }
-    }
-
-    private fun setSubTitles(subTitles: ArrayList<SubTitle>) {
-        this.subTitles = subTitles
-        validateAndUpdate()
     }
 
     private fun validateAndUpdate() {
@@ -808,56 +784,60 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         }
     }
 
-    init {
-        val res = context.resources
-        val a = context.obtainStyledAttributes(attrs, R.styleable.CalendarPickerView)
-        val bg = a.getColor(
-            R.styleable.CalendarPickerView_android_background,
-            res.getColor(R.color.calendar_bg))
-        dividerColor = a.getColor(
-            R.styleable.CalendarPickerView_tsquare_dividerColor,
-            res.getColor(R.color.calendar_divider))
-        dayBackgroundResId = a.getResourceId(
-            R.styleable.CalendarPickerView_tsquare_dayBackground,
-            R.drawable.calendar_bg_selector)
-        dayTextColorResId = a.getResourceId(
-            R.styleable.CalendarPickerView_tsquare_dayTextColor,
-            R.drawable.day_text_color)
-        titleTextColor = a.getColor(
-            R.styleable.CalendarPickerView_tsquare_titleTextColor,
-            res.getColor(R.color.dateTimeRangePickerTitleTextColor))
-        displayHeader = a.getBoolean(R.styleable.CalendarPickerView_tsquare_displayHeader, true)
-        headerTextColor = a.getColor(
-            R.styleable.CalendarPickerView_tsquare_headerTextColor,
-            res.getColor(R.color.dateTimeRangePickerHeaderTextColor))
-        orientation = a.getBoolean(R.styleable.CalendarPickerView_tsquare_orientation_horizontal, false)
-        a.recycle()
-        adapter = MonthAdapter(
-            MonthView.StyleData(
-                today, dividerColor,
-                dayBackgroundResId, dayTextColorResId, titleTextColor, displayHeader,
-                headerTextColor, decorators, Locale.getDefault(), dayViewAdapter,
-            ))
-        locale = Locale.getDefault()
-        var layoutManager: LinearLayoutManager
-//        val gridDecorator = GridSpaceItemDecoration(20)
-//        addItemDecoration(gridDecorator)
-        if (!orientation) {
-            layoutManager = LinearLayoutManager(getContext(), VERTICAL, monthsReverseOrder)
-        } else {
-            layoutManager = LinearLayoutManager(getContext(), HORIZONTAL, monthsReverseOrder)
-            val snapHelper: SnapHelper = LinearSnapHelper()
-            snapHelper.attachToRecyclerView(this)
+    inner class FluentInitializer {
+        fun inMode(mode: SelectionMode?): FluentInitializer {
+            selectionMode = mode
+            validateAndUpdate()
+            return this
         }
-        setLayoutManager(layoutManager)
-        setBackgroundColor(bg)
-        timeZone = TimeZone.getDefault()
-        if (isInEditMode) {
-            val nextYear = Calendar.getInstance(timeZone, locale)
-            nextYear.add(Calendar.YEAR, 1)
-            init(Date(), nextYear.time) //
-                .withSelectedDate(Date())
+
+        fun withSelectedDate(selectedDates: Date): FluentInitializer {
+            return withSelectedDates(listOf(selectedDates))
         }
+
+        fun withSelectedDates(selectedDates: Collection<Date>): FluentInitializer {
+            require(!(selectionMode == SelectionMode.SINGLE && selectedDates.size > 1)) { "SINGLE mode can't be used with multiple selectedDates" }
+            require(!(selectionMode == SelectionMode.RANGE && selectedDates.size > 2)) { "RANGE mode only allows two selectedDates.  You tried to pass " + selectedDates.size }
+            for (date in selectedDates) {
+                selectDate(date)
+            }
+            scrollToSelectedDates()
+            validateAndUpdate()
+            return this
+        }
+
+        fun withHighlightedDates(dates: Collection<Date>): FluentInitializer {
+            highlightDates(dates)
+            return this
+        }
+
+        fun withHighlightedDate(date: Date): FluentInitializer {
+            return withHighlightedDates(listOf(date))
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        fun setShortWeekdays(newShortWeekdays: Array<String?>?): FluentInitializer {
+            val symbols = DateFormatSymbols(locale)
+            symbols.shortWeekdays = newShortWeekdays
+            weekdayNameFormat = SimpleDateFormat("E", symbols)
+            return this
+        }
+
+        fun displayOnly(): FluentInitializer {
+            displayOnly = true
+            return this
+        }
+
+        fun withMonthsReverseOrder(monthsRevOrder: Boolean): FluentInitializer {
+            monthsReverseOrder = monthsRevOrder
+            return this
+        }
+
+        fun withDeactivateDates(deactivateDates: ArrayList<Int>): FluentInitializer {
+            deactivateDates(deactivateDates)
+            return this
+        }
+
     }
 
     enum class SelectionMode {
