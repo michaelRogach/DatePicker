@@ -64,6 +64,11 @@ class SampleActivity : AppCompatActivity() {
 //            Toast.makeText(this@SampleActivity, "list " + calendar.selectedDates.toString(), Toast.LENGTH_LONG).show()
 //        })
         setUpWeekNames(daysNames)
+
+//        calendar.viewTreeObserver.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener {
+//
+//            calendar.scrollToSelectedMonth()
+//        })
     }
 
     private fun setUpWeekNames(headerRow: CalendarRowView) {
