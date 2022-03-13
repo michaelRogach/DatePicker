@@ -5,5 +5,10 @@
   <dimen name="calendar_text_medium">16sp</dimen>
   <dimen name="calendar_text_large">18sp</dimen>
   <dimen name="calendar_text_small">12sp</dimen>
+  <dimen name="calendar_text_very_small">10sp</dimen>
   <dimen name="calendar_text_tiny">8sp</dimen>
+
+  <dimen name="button_height">44dp</dimen>
+  <dimen name="space_default">16dp</dimen>
+  <dimen name="text_size_button">16sp</dimen>
 </resources>

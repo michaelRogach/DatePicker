@@ -43,7 +43,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
     private var items = arrayListOf<Any>()
-    private var pickerType = PickerType.MONTHLY
+    private var pickerType = PickerType.YEARLY
 
     private val cellClickedListener = object : MonthView.Listener {
         override fun handleClick(cell: MonthCellDescriptor?) {
@@ -321,7 +321,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         return MonthView.StyleData(
             today, dividerColor,
             dayBackgroundResId, dayTextColorResId, false,
-            headerTextColor, locale, dayViewAdapter, cellClickedListener,
+            headerTextColor, locale, if(pickerType == PickerType.MONTHLY) DefaultDayViewAdapter() else GridDayViewAdapter(), cellClickedListener,
         )
     }
 

@@ -9,6 +9,8 @@
         <entry key="app/src/main/res/drawable/calendar_bg_selector.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/calendar_text_selector.xml" value="0.2385" />
         <entry key="app/src/main/res/drawable/day_text_color.xml" value="0.3285" />
+        <entry key="app/src/main/res/drawable/dialog_background_inset.xml" value="0.2025" />
+        <entry key="app/src/main/res/drawable/divider_dash_v3.xml" value="0.2025" />
         <entry key="app/src/main/res/drawable/first_day_in_range.xml" value="0.2025" />
         <entry key="app/src/main/res/drawable/left_range.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/left_range_badge.xml" value="0.3285" />
@@ -28,6 +30,7 @@
         <entry key="app/src/main/res/drawable/state_selected.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/state_unavailable.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sample.xml" value="0.19327731092436976" />
+        <entry key="app/src/main/res/layout/fragment_date_picker.xml" value="0.5375" />
         <entry key="app/src/main/res/layout/item_header_date.xml" value="0.25" />
         <entry key="app/src/main/res/layout/month.xml" value="0.2994791666666667" />
         <entry key="app/src/main/res/layout/week.xml" value="0.5515625" />

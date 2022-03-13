@@ -39,4 +39,18 @@
     <color name="custom_header_text">#030303</color>
     <color name="pale_grey">#efeff4</color>
 
+    <color name="new_cyan_100">#e2f6fb</color>
+    <color name="new_cyan_300">#B8E7F3</color>
+    <color name="new_cyan_500">#26AACC</color>
+    <color name="new_cyan_500_a100">#3326AACC</color>
+    <color name="new_cyan_500_a60">#1F26AACC</color>
+
+    <color name="cyan_200">#38addc</color>
+    <color name="cyan_300">#38addc</color>
+    <color name="cyan_400">#26c6da</color>
+    <color name="cyan_600">#00ACC1</color>
+    <color name="cyan_600_a100">#3300ACC1</color>
+    <color name="cyan_700">#00838F</color>
+    <color name="cyan_800">#00838F</color>
+
 </resources>

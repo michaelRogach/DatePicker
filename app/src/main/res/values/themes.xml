@@ -13,4 +13,24 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="YelloDialogOverlayTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowAnimationStyle">@style/YelloDialogPopUpAnimations</item>
+        <item name="colorAccent">@color/new_cyan_500</item>
+        <item name="colorPrimary">@color/new_cyan_500</item>
+        <item name="colorButtonNormal">@color/cyan_600</item>
+        <item name="colorControlActivated">@color/cyan_600</item>
+    </style>
+
+    <style name="YelloDialogPopUpAnimations">
+        <item name="android:windowEnterAnimation">@anim/pop_up</item>
+        <item name="android:windowExitAnimation">@anim/pop_down</item>
+    </style>
 </resources>
