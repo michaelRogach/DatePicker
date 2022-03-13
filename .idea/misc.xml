@@ -9,6 +9,7 @@
         <entry key="app/src/main/res/drawable/calendar_bg_selector.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/calendar_text_selector.xml" value="0.2385" />
         <entry key="app/src/main/res/drawable/day_text_color.xml" value="0.3285" />
+        <entry key="app/src/main/res/drawable/first_day_in_range.xml" value="0.2025" />
         <entry key="app/src/main/res/drawable/left_range.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/left_range_badge.xml" value="0.3285" />
         <entry key="app/src/main/res/drawable/middle_range.xml" value="0.1715" />

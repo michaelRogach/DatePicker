@@ -69,7 +69,6 @@
         android:scrollbarStyle="outsideOverlay"
         app:tsquare_dividerColor="@color/transparent"
         app:tsquare_headerTextColor="@color/custom_header_text"
-        app:tsquare_orientation_horizontal="false"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp"/>
 

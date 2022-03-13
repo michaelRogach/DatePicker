@@ -55,7 +55,7 @@ class SampleActivity : AppCompatActivity() {
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-        calendar.init(lastYear.time, nextYear.time, SimpleDateFormat("MMMM, yyyy", Locale.getDefault())) //
+        calendar.initialize(lastYear.time, nextYear.time) //
             .inMode(CalendarPickerView.SelectionMode.RANGE)
             .withHighlightedDates(arrayList)
             .withSelectedDates(selected)
