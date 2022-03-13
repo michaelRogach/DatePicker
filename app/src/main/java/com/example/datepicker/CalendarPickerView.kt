@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.example.datepicker.adapter.MonthAdapter
-import com.example.datepicker.adapter.data_holders.HeaderDH
 import com.example.datepicker.adapter.data_holders.MonthDH
 import java.text.DateFormat
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs) {
 
@@ -112,6 +112,11 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             val snapHelper: SnapHelper = LinearSnapHelper()
             snapHelper.attachToRecyclerView(this)
         }
+//        layoutManager.spanSizeLookup = object : SpanSizeLookup() {
+//            override fun getSpanSize(position: Int): Int {
+//                return if (position == 0 || position % 13 == 0) 3 else 1
+//            }
+//        }
         setLayoutManager(layoutManager)
         setBackgroundColor(bg)
         if (isInEditMode) {
@@ -168,6 +173,14 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         months.clear()
         minCal.time = minDate
         maxCal.time = maxDate
+        minCal.apply {
+            set(Calendar.MONTH, 0)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        maxCal.apply {
+            set(Calendar.MONTH, 0)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
         setMidnight(minCal)
         setMidnight(maxCal)
         displayOnly = false
@@ -177,7 +190,11 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         maxCal.add(Calendar.MILLISECOND, -1)
 
         // Now iterate between minCal and maxCal and build up our list of months to show.
-        monthCounter.time = minCal.time
+        monthCounter.apply {
+            time = minCal.time
+            set(Calendar.MONTH, 0)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
         val maxMonth = maxCal.get(Calendar.MONTH)
         val maxYear = maxCal.get(Calendar.YEAR)
         while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.
@@ -192,8 +209,21 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             monthCounter.add(Calendar.MONTH, 1)
         }
 
+//        months.chunked(12).forEach {
+//            val monthDescriptor = it.first()
+//            items.add(HeaderDH(monthDescriptor.date.time, SimpleDateFormat("yyyy", Locale.getDefault()).format(monthDescriptor.date)))
+//            it.forEachIndexed { index, month ->
+//                items.add(
+//                    MonthDH(
+//                        month,
+//                        cells.getValueAtIndex(cells.getIndexOfKey(monthKey(month))) ?: emptyList(),
+//                        displayOnly, titleTypeface, dateTypeface, deactivatedDates
+//                    ))
+//            }
+//        }
+
         months.forEachIndexed { index, monthDescriptor ->
-            items.add(HeaderDH(monthDescriptor.date.time, monthDescriptor.label))
+//            items.add(HeaderDH(monthDescriptor.date.time, monthDescriptor.label))
             items.add(
                 MonthDH(
                     monthDescriptor,

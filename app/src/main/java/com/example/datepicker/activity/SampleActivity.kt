@@ -16,7 +16,7 @@ class SampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample)
         val nextYear = Calendar.getInstance()
-        nextYear.add(Calendar.YEAR, 10)
+        nextYear.add(Calendar.YEAR, 1)
         val lastYear = Calendar.getInstance()
         lastYear.add(Calendar.YEAR, -10)
         var calendar = findViewById<CalendarPickerView>(R.id.calendar_view)

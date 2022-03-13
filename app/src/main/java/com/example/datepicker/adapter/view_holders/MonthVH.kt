@@ -19,7 +19,7 @@ class MonthVH(containerView: View) : DiffVH<MonthDH>(containerView) {
     private fun renderView(data: MonthDH) {
         val monthView = itemView as MonthView
 
-        monthView.init(data.cells, data.displayOnly,
+        monthView.init(data.month, data.cells, data.displayOnly,
             data.dateTypeface, data.deactivatedDates)
 
     }

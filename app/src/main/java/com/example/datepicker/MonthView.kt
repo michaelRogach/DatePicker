@@ -5,10 +5,12 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import java.text.NumberFormat
 import java.util.*
 
 class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+    var title: TextView? = null
     var grid: CalendarGridView? = null
     var listener: Listener? = null
     var isRtl = false
@@ -17,21 +19,23 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+        title = findViewById<View>(R.id.title) as TextView
         grid = findViewById<View>(R.id.calendar_grid) as CalendarGridView
     }
 
-    fun init(cells: List<List<MonthCellDescriptor>>, displayOnly: Boolean,
+    fun init(month: MonthDescriptor, cells: List<List<MonthCellDescriptor>>, displayOnly: Boolean,
              dateTypeface: Typeface?, deactivatedDates: ArrayList<Int>) {
 
+        title?.text = month.label
         val numberFormatter = NumberFormat.getInstance(locale)
         val numRows = cells.size
         grid?.setNumRows(numRows)
-        for (i in 0..4) {
-            val weekRow = grid?.getChildAt(i + 1) as CalendarRowView
+        for (i in 0..5) {
+            val weekRow = grid?.getChildAt(i + 1) as CalendarRowView? ?: break
             weekRow.setListener(listener)
             if (i < numRows) {
                 weekRow.visibility = VISIBLE
-                val week: List<MonthCellDescriptor> = cells[i]
+                val week: List<MonthCellDescriptor> = if(cells.count() > i) cells[i] else break
                 for (c in week.indices) {
 
                     val cell: MonthCellDescriptor = week[if (isRtl) 6 - c else c]
