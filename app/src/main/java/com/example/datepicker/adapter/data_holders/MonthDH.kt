@@ -4,7 +4,7 @@ import android.graphics.Typeface
 import com.example.datepicker.MonthCellDescriptor
 import com.example.datepicker.MonthDescriptor
 
-class MonthDH(
+data class MonthDH(
     val month: MonthDescriptor,
     val cells: List<List<MonthCellDescriptor>>,
     val displayOnly: Boolean,

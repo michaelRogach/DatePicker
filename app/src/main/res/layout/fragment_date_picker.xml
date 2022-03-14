@@ -1,68 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="50dp"
+    android:background="@drawable/bg_round_rect_white_with_grey_stroke"
+    tools:ignore="autofill">
 
     <FrameLayout
         android:id="@+id/flHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/pale_grey">
+        android:paddingRight="16dp">
 
-    <com.example.datepicker.CalendarRowView
-        android:id="@+id/daysNames"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/calendar_day_headers_paddingbottom">
+        <com.example.datepicker.CalendarRowView
+            android:id="@+id/daysNames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/calendar_day_headers_paddingbottom">
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/CalendarCell.DayHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </com.example.datepicker.CalendarRowView>
+            <TextView
+                style="@style/CalendarCell.DayHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.example.datepicker.CalendarRowView>
 
     </FrameLayout>
 
     <com.example.datepicker.CalendarPickerView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/btnOk"
         android:layout_below="@+id/flHeader"
         android:clipToPadding="false"
@@ -76,14 +77,31 @@
         tools:layout_editor_absoluteY="0dp" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnChangeView"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/space_default"
+        android:layout_marginTop="@dimen/space_default"
+        android:layout_marginEnd="@dimen/space_default"
+        android:layout_marginBottom="@dimen/space_default"
+        android:text="Monthly"
+        android:textColor="@color/new_cyan_500"
+        android:textSize="@dimen/text_size_button" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnOk"
         style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height"
-        android:layout_margin="@dimen/space_default"
-        android:text="Ok"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/space_default"
+        android:layout_marginTop="@dimen/space_default"
+        android:layout_marginEnd="@dimen/space_default"
+        android:layout_marginBottom="@dimen/space_default"
+        android:text="Ok"
         android:textColor="@color/new_cyan_500"
         android:textSize="@dimen/text_size_button" />
 

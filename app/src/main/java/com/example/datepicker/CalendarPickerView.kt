@@ -43,7 +43,9 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
     private var items = arrayListOf<Any>()
-    private var pickerType = PickerType.YEARLY
+    var pickerType = PickerType.MONTHLY
+    private var minDate = Date()
+    private var maxDate = Date()
 
     private val cellClickedListener = object : MonthView.Listener {
         override fun handleClick(cell: MonthCellDescriptor?) {
@@ -107,6 +109,18 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         setBackgroundColor(bg)
     }
 
+    fun updateDatePickerType() {
+        months.clear()
+        items.clear()
+        this.pickerType = if(pickerType == PickerType.MONTHLY) PickerType.YEARLY else PickerType.MONTHLY
+        adapter = MonthAdapter(prepareStyleData())
+        setAdapter(adapter)
+        initLayoutManager()
+        initCalendars(minDate, maxDate)
+        prepareItems()
+        scrollToSelectedDates()
+    }
+
     private fun initLayoutManager() {
         val layoutManager: LinearLayoutManager
         if (pickerType == PickerType.MONTHLY) {
@@ -129,15 +143,13 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         clearPreviousStates()
         displayOnly = false
         initCalendars(minDate, maxDate)
-
-        val maxMonth = maxCal.get(Calendar.MONTH)
-        val maxYear = maxCal.get(Calendar.YEAR)
-
-        prepareItems(maxMonth, maxYear)
+        prepareItems()
         return FluentInitializer()
     }
 
     private fun initCalendars(minDate: Date, maxDate: Date) {
+        this.minDate = minDate
+        this.maxDate = maxDate
         minCal = Calendar.getInstance(timeZone, locale)
         maxCal = Calendar.getInstance(timeZone, locale)
         monthCounter = Calendar.getInstance(timeZone, locale)
@@ -167,13 +179,16 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         }
     }
 
-    private fun prepareItems(maxMonth: Int, maxYear: Int) {
+    private fun prepareItems() {
+        val maxMonth = maxCal.get(Calendar.MONTH)
+        val maxYear = maxCal.get(Calendar.YEAR)
+        val monthNameFormat = SimpleDateFormat(if (pickerType == PickerType.YEARLY) "MMM" else "MMMM, yyyy", Locale.getDefault())
+        monthNameFormat.timeZone = timeZone
+
         while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.
                     || monthCounter.get(Calendar.YEAR) < maxYear) // Up to the year.
             && monthCounter.get(Calendar.YEAR) < maxYear + 1) { // But not > next yr.
             val date = monthCounter.time
-            val monthNameFormat = SimpleDateFormat(if (pickerType == PickerType.YEARLY) "MMM" else "MMMM, yyyy", Locale.getDefault())
-            monthNameFormat.timeZone = timeZone
             val month = MonthDescriptor(
                 monthCounter.get(Calendar.MONTH), monthCounter.get(Calendar.YEAR), date,
                 monthNameFormat.format(date) ?: "")
@@ -396,7 +411,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                                 if (highlightedCells.contains(singleCell)) {
                                     singleCell.isSelected = false
                                     singleCell.isMarked = true
-                                    singleCell.isHighlighted = false
+                                    singleCell.isHighlighted = true
                                     selectedCells.add(singleCell)
                                 } else if (!deactivatedDates.contains(singleCell.date.day + 1)) {
                                     singleCell.isSelected = true
@@ -593,6 +608,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         // Clear previous state.
         cells.clear()
         months.clear()
+        items.clear()
     }
 
     private fun containsDate(selectedCals: List<Calendar>, date: Date): Boolean {

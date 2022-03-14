@@ -9,6 +9,7 @@ class HeaderDiffCallback : DiffUtil.ItemCallback<HeaderDH>() {
 
     companion object {
         const val DIFF_TITLE = "title"
+        const val DIFF_DATE = "date"
     }
 
     override fun areItemsTheSame(oldItem: HeaderDH, newItem: HeaderDH): Boolean {
@@ -23,6 +24,9 @@ class HeaderDiffCallback : DiffUtil.ItemCallback<HeaderDH>() {
         val diffs = mutableSetOf<String>()
 
         if (notEqualObjects(oldItem.dateLong, newItem.dateLong))
+            diffs.add(DIFF_DATE)
+
+        if (notEqualObjects(oldItem.title, newItem.title))
             diffs.add(DIFF_TITLE)
 
         return diffs

@@ -19,16 +19,22 @@ class DatePickerFragment() : BaseDialogFragment() {
 
     override fun initUI(savedInstanceState: Bundle?) {
         val btnOk = view?.findViewById<MaterialButton>(R.id.btnOk)
+        val btnChangeView = view?.findViewById<MaterialButton>(R.id.btnChangeView)
+        var calendar = view?.findViewById<CalendarPickerView>(R.id.calendar_view)
+        var daysNames = view?.findViewById<CalendarRowView>(R.id.daysNames)
         btnOk?.setOnClickListener {
             dismiss()
+        }
+
+        btnChangeView?.setOnClickListener {
+            btnChangeView.text = if(calendar?.pickerType == CalendarPickerView.PickerType.YEARLY) "Monthly" else "Yearly"
+            calendar?.updateDatePickerType()
         }
 
         val nextYear = Calendar.getInstance()
         nextYear.add(Calendar.YEAR, 1)
         val lastYear = Calendar.getInstance()
         lastYear.add(Calendar.YEAR, -10)
-        var calendar = view?.findViewById<CalendarPickerView>(R.id.calendar_view)
-        var daysNames = view?.findViewById<CalendarRowView>(R.id.daysNames)
 //        val list = ArrayList<Int>()
         //        list.add(2);
 //        calendar.deactivateDates(list)
