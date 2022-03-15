@@ -16,14 +16,14 @@
             android:id="@+id/flHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_round_top_rect_grey"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
 
             <com.example.datepicker.CalendarRowView
                 android:id="@+id/daysNames"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/calendar_day_headers_paddingbottom">
+                android:layout_height="wrap_content">
 
                 <TextView
                     style="@style/CalendarCell.DayHeader"
@@ -63,17 +63,24 @@
 
         </FrameLayout>
 
+        <View
+            android:id="@+id/vDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/flHeader"
+            android:background="@color/grey" />
+
         <com.example.datepicker.CalendarPickerLightView
             android:id="@+id/calendar_light_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/btnOk"
-            android:layout_below="@+id/flHeader"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/vDashDivider"
+            android:layout_below="@+id/vDivider"
             android:layout_marginTop="16dp"
             android:clipToPadding="false"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="16dp"
+            android:paddingBottom="50dp"
             android:scrollbarStyle="outsideOverlay"
             android:visibility="invisible"
             app:tsquare_dividerColor="@color/transparent"
@@ -84,19 +91,24 @@
         <com.example.datepicker.CalendarPickerView
             android:id="@+id/calendar_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/btnOk"
-            android:layout_below="@+id/flHeader"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/vDashDivider"
+            android:layout_below="@+id/vDivider"
             android:clipToPadding="false"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="16dp"
+            android:paddingBottom="30dp"
             android:scrollbarStyle="outsideOverlay"
             android:visibility="visible"
             app:tsquare_dividerColor="@color/transparent"
-            app:tsquare_headerTextColor="@color/custom_header_text"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            app:tsquare_headerTextColor="@color/custom_header_text" />
+
+        <View
+            android:id="@+id/vDashDivider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_above="@+id/btnChangeView"
+            android:background="@drawable/divider_dash_v3" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChangeView"
@@ -105,12 +117,13 @@
             android:layout_height="@dimen/button_height"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/space_default"
-            android:layout_marginTop="@dimen/space_default"
             android:layout_marginEnd="@dimen/space_default"
-            android:layout_marginBottom="@dimen/space_default"
             android:text="Monthly"
             android:textColor="@color/new_cyan_500"
-            android:textSize="@dimen/text_size_button" />
+            android:textSize="@dimen/text_size_button"
+            app:icon="@drawable/ic_back"
+            app:iconPadding="8dp"
+            app:iconTint="@color/new_cyan_500" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOk"
@@ -120,9 +133,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/space_default"
-            android:layout_marginTop="@dimen/space_default"
             android:layout_marginEnd="@dimen/space_default"
-            android:layout_marginBottom="@dimen/space_default"
             android:text="Ok"
             android:textColor="@color/new_cyan_500"
             android:textSize="@dimen/text_size_button" />

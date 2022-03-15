@@ -33,6 +33,7 @@
     <color name="dateTimeRangePickerTitleTextColor">@android:color/black</color>
     <color name="dateTimeRangePickerRangeTextColorActive">@android:color/black</color>
     <color name="dateTimeRangePickerRangeTextColorInactive">#B9B9B9</color>
+    <color name="grey">#cbcbcb</color>
 
     <color name="transparent">#00000000</color>
     <color name="dividerColor">#e0e0e0</color>

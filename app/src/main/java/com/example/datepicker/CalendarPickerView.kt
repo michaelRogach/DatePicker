@@ -159,7 +159,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private fun prepareItems() {
         val maxMonth = maxCal.get(Calendar.MONTH)
         val maxYear = maxCal.get(Calendar.YEAR)
-        val monthNameFormat = SimpleDateFormat("MMMM, yyyy", Locale.getDefault())
+        val monthNameFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
         monthNameFormat.timeZone = timeZone
 
         while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.datepicker.adapter.MonthAdapter
 import com.example.datepicker.adapter.data_holders.HeaderDH
@@ -86,7 +87,6 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
         clearPreviousStates()
         initCalendars(minDate, maxDate)
         prepareItems()
-        scrollToSelectedDates()
         setAdapter(adapter)
     }
 
@@ -158,21 +158,15 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
         }
     }
 
-    fun scrollToSelectedMonth(selectedIndex: Int, smoothScroll: Boolean = false) {
-        post {
-            if (smoothScroll) {
-                smoothScrollToPosition(selectedIndex)
-            } else {
-                scrollToPosition(selectedIndex)
-            }
-        }
-    }
+    fun scrollToSelectedDateStartYear(date: Date) {
+        val dateCal = Calendar.getInstance(timeZone, locale)
+        dateCal.time = date
+        val selectedIndex = items.indexOfFirst { it is MonthDH && sameMonth(dateCal, it.month) }
+        val yearIndex = items.subList(0, selectedIndex).indexOfLast { it is HeaderDH }
 
-    private fun scrollToSelectedDates() {
-        val today = Calendar.getInstance(timeZone, locale)
-        val selectedIndex = items.indexOfFirst { it is MonthDH && sameMonth(today, it.month) }
-        if (selectedIndex != -1)
-            scrollToSelectedMonth(selectedIndex)
+        if (yearIndex != -1) {
+            (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(yearIndex, 0)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

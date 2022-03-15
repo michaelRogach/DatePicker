@@ -1,6 +1,7 @@
 package com.example.datepicker.activity
 
 import android.os.Bundle
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -22,6 +23,7 @@ class DatePickerFragment() : BaseDialogFragment() {
 
     override fun initUI(savedInstanceState: Bundle?) {
         val flHeader = view?.findViewById<FrameLayout>(R.id.flHeader)
+        val vDivider = view?.findViewById<View>(R.id.vDivider)
         val btnOk = view?.findViewById<MaterialButton>(R.id.btnOk)
         val btnChangeView = view?.findViewById<MaterialButton>(R.id.btnChangeView)
         var calendar = view?.findViewById<CalendarPickerView>(R.id.calendar_view)
@@ -37,6 +39,7 @@ class DatePickerFragment() : BaseDialogFragment() {
             calendar?.isVisible = pickerType == CalendarPickerView.PickerType.WEEKLY
             calendarLight?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
             flHeader?.isVisible = pickerType == CalendarPickerView.PickerType.WEEKLY
+            vDivider?.isVisible = pickerType == CalendarPickerView.PickerType.WEEKLY
         }
 
 
@@ -79,10 +82,12 @@ class DatePickerFragment() : BaseDialogFragment() {
         calendarLight?.apply {
             initialize(lastYear.time, nextYear.time, object : MonthAdapter.IClickListener {
                 override fun onMonthClicked(position: Int, month: MonthDescriptor) {
-                    btnChangeView?.performClick()
                     calendar?.scrollToDate(month.date, true)
+                    btnChangeView?.performClick()
+                    scrollToSelectedDateStartYear(month.date)
                 }
             })
+            scrollToSelectedDateStartYear(Date())
         }
 
         calendar?.initialize(lastYear.time, nextYear.time)
