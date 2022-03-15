@@ -47,6 +47,6 @@ class MonthAdapter(private val styleData: MonthView.StyleData, private val liste
     }
 
     interface IClickListener {
-        fun onMonthClicked(month: MonthDescriptor)
+        fun onMonthClicked(position: Int, month: MonthDescriptor)
     }
 }

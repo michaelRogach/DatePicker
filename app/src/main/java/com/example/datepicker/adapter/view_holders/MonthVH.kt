@@ -10,7 +10,7 @@ class MonthVH(containerView: View, listener: MonthAdapter.IClickListener?) : Dif
 
     init {
         itemView.setOnClickListener {
-            listener?.onMonthClicked(data.month)
+            listener?.onMonthClicked(adapterPosition, data.month)
         }
     }
 

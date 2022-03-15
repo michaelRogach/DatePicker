@@ -158,7 +158,7 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
         }
     }
 
-    private fun scrollToSelectedMonth(selectedIndex: Int, smoothScroll: Boolean = false) {
+    fun scrollToSelectedMonth(selectedIndex: Int, smoothScroll: Boolean = false) {
         post {
             if (smoothScroll) {
                 smoothScrollToPosition(selectedIndex)

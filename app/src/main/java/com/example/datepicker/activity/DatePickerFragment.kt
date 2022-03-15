@@ -14,7 +14,7 @@ import java.util.*
 
 class DatePickerFragment() : BaseDialogFragment() {
 
-    private var pickerType = CalendarPickerView.PickerType.MONTHLY
+    private var pickerType = CalendarPickerView.PickerType.WEEKLY
 
     override fun getTheme(): Int = R.style.YelloDialogOverlayTheme
 
@@ -32,11 +32,11 @@ class DatePickerFragment() : BaseDialogFragment() {
         }
 
         btnChangeView?.setOnClickListener {
-            pickerType = if (pickerType == CalendarPickerView.PickerType.MONTHLY) CalendarPickerView.PickerType.YEARLY else CalendarPickerView.PickerType.MONTHLY
-            btnChangeView.text = if (pickerType == CalendarPickerView.PickerType.YEARLY) "Monthly" else "Yearly"
-            calendar?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
-            calendarLight?.isVisible = pickerType == CalendarPickerView.PickerType.YEARLY
-            flHeader?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
+            pickerType = if (pickerType == CalendarPickerView.PickerType.WEEKLY) CalendarPickerView.PickerType.MONTHLY else CalendarPickerView.PickerType.WEEKLY
+            btnChangeView.text = if (pickerType == CalendarPickerView.PickerType.WEEKLY) "Monthly" else "Weekly"
+            calendar?.isVisible = pickerType == CalendarPickerView.PickerType.WEEKLY
+            calendarLight?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
+            flHeader?.isVisible = pickerType == CalendarPickerView.PickerType.WEEKLY
         }
 
 
@@ -78,9 +78,9 @@ class DatePickerFragment() : BaseDialogFragment() {
         }
         calendarLight?.apply {
             initialize(lastYear.time, nextYear.time, object : MonthAdapter.IClickListener {
-                override fun onMonthClicked(month: MonthDescriptor) {
+                override fun onMonthClicked(position: Int, month: MonthDescriptor) {
                     btnChangeView?.performClick()
-                    calendar?.scrollToDate(month.date)
+                    calendar?.scrollToDate(month.date, true)
                 }
             })
         }

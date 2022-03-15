@@ -4,11 +4,13 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.example.datepicker.adapter.MonthAdapter
 import com.example.datepicker.adapter.data_holders.MonthDH
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 
 class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs) {
@@ -196,11 +198,19 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     private fun scrollToSelectedMonth(selectedIndex: Int, smoothScroll: Boolean = false) {
         post {
-            if (smoothScroll) {
-                smoothScrollToPosition(selectedIndex)
+            val firstVisibleItem = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            smoothScroller.targetPosition = selectedIndex
+            if (abs(firstVisibleItem - selectedIndex) < 10 && smoothScroll) {
+                (layoutManager as LinearLayoutManager).startSmoothScroll(smoothScroller)
             } else {
-                scrollToPosition(selectedIndex)
+                (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(selectedIndex, 20)
             }
+        }
+    }
+
+    var smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
+        override fun getVerticalSnapPreference(): Int {
+            return SNAP_TO_START
         }
     }
 
@@ -214,13 +224,13 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             scrollToSelectedMonth(selectedIndex)
     }
 
-    fun scrollToDate(date: Date): Boolean {
+    fun scrollToDate(date: Date, smoothScroll: Boolean = false): Boolean {
         val today = Calendar.getInstance(timeZone, locale)
         today.time = date
         val selectedIndex = items.indexOfFirst { it is MonthDH && sameMonth(today, it.month) }
 
         if (selectedIndex != -1) {
-            scrollToSelectedMonth(selectedIndex, true)
+            scrollToSelectedMonth(selectedIndex, smoothScroll)
             return true
         }
         return false
@@ -805,6 +815,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     }
 
     enum class PickerType {
-        MONTHLY, YEARLY
+        WEEKLY, MONTHLY
     }
 }
