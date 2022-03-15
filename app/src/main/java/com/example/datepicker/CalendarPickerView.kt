@@ -220,7 +220,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         val selectedIndex = items.indexOfFirst { it is MonthDH && sameMonth(today, it.month) }
 
         if (selectedIndex != -1) {
-            scrollToSelectedMonth(selectedIndex)
+            scrollToSelectedMonth(selectedIndex, true)
             return true
         }
         return false

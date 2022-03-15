@@ -80,6 +80,7 @@ class DatePickerFragment() : BaseDialogFragment() {
             initialize(lastYear.time, nextYear.time, object : MonthAdapter.IClickListener {
                 override fun onMonthClicked(month: MonthDescriptor) {
                     btnChangeView?.performClick()
+                    calendar?.scrollToDate(month.date)
                 }
             })
         }
