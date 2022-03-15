@@ -14,7 +14,7 @@ import java.util.*
 
 class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs) {
 
-    private var adapter: MonthAdapter?
+    private var adapter: MonthAdapter? = null
     private val cells = IndexedLinkedHashMap<String, List<List<MonthCellDescriptor>>>()
     private val months: MutableList<MonthDescriptor> = ArrayList()
     private var deactivatedDates = ArrayList<Int>()
@@ -36,10 +36,10 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
     private var items = arrayListOf<Any>()
     private var minDate = Date()
     private var maxDate = Date()
+    private var itemClickListener: MonthAdapter.IClickListener? = null
 
     init {
         obtainStyles(attrs)
-        adapter = MonthAdapter(prepareStyleData())
         initLayoutManager()
     }
 
@@ -81,7 +81,8 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
         setLayoutManager(layoutManager)
     }
 
-    fun initialize(minDate: Date, maxDate: Date) {
+    fun initialize(minDate: Date, maxDate: Date, listener: MonthAdapter.IClickListener) {
+        adapter = MonthAdapter(prepareStyleData(), listener)
         clearPreviousStates()
         initCalendars(minDate, maxDate)
         prepareItems()
@@ -152,7 +153,7 @@ class CalendarPickerLightView(context: Context, attrs: AttributeSet?) : Recycler
                 MonthDH(
                     month,
                     cells.getValueAtIndex(cells.getIndexOfKey(monthKey(month))) ?: emptyList(),
-                    false, titleTypeface, dateTypeface, deactivatedDates
+                    true, titleTypeface, dateTypeface, deactivatedDates
                 ))
         }
     }

@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
-import com.example.datepicker.CalendarPickerLightView
-import com.example.datepicker.CalendarPickerView
-import com.example.datepicker.CalendarRowView
-import com.example.datepicker.R
+import com.example.datepicker.*
+import com.example.datepicker.adapter.MonthAdapter
 import com.google.android.material.button.MaterialButton
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -78,7 +76,13 @@ class DatePickerFragment() : BaseDialogFragment() {
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-        calendarLight?.initialize(lastYear.time, nextYear.time)
+        calendarLight?.apply {
+            initialize(lastYear.time, nextYear.time, object : MonthAdapter.IClickListener {
+                override fun onMonthClicked(month: MonthDescriptor) {
+                    btnChangeView?.performClick()
+                }
+            })
+        }
 
         calendar?.initialize(lastYear.time, nextYear.time)
             ?.inMode(CalendarPickerView.SelectionMode.RANGE)

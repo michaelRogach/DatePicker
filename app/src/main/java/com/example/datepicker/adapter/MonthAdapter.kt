@@ -1,6 +1,7 @@
 package com.example.datepicker.adapter
 
 import android.view.View
+import com.example.datepicker.MonthDescriptor
 import com.example.datepicker.MonthView
 import com.example.datepicker.R
 import com.example.datepicker.adapter.data_holders.HeaderDH
@@ -9,7 +10,7 @@ import com.example.datepicker.adapter.diff_callbacks.MonthsCallback
 import com.example.datepicker.adapter.view_holders.HeaderVH
 import com.example.datepicker.adapter.view_holders.MonthVH
 
-class MonthAdapter(private val styleData: MonthView.StyleData) : DiffAdapter<DiffVH<Any>, Any>(MonthsCallback()) {
+class MonthAdapter(private val styleData: MonthView.StyleData, private val listener: IClickListener? = null) : DiffAdapter<DiffVH<Any>, Any>(MonthsCallback()) {
 
     companion object {
         const val TYPE_SECTION_HEADER = 1
@@ -39,13 +40,13 @@ class MonthAdapter(private val styleData: MonthView.StyleData) : DiffAdapter<Dif
                     setDayViewAdapter(styleData.adapter)
                     setUpView(styleData)
                 }
-                MonthVH(rootView)
+                MonthVH(rootView, listener)
             }
             else -> throw Exception("This item type not supported by this adapter!")
         } as DiffVH<Any>
     }
 
     interface IClickListener {
-//        fun onDateGroupExpandStateChanged(groupDateDH: GroupDateDH)
+        fun onMonthClicked(month: MonthDescriptor)
     }
 }
