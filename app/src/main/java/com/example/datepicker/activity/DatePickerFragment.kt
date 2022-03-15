@@ -1,7 +1,10 @@
 package com.example.datepicker.activity
 
 import android.os.Bundle
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
+import com.example.datepicker.CalendarPickerLightView
 import com.example.datepicker.CalendarPickerView
 import com.example.datepicker.CalendarRowView
 import com.example.datepicker.R
@@ -13,31 +16,37 @@ import java.util.*
 
 class DatePickerFragment() : BaseDialogFragment() {
 
+    private var pickerType = CalendarPickerView.PickerType.MONTHLY
+
     override fun getTheme(): Int = R.style.YelloDialogOverlayTheme
 
     override fun getLayoutResId(): Int = R.layout.fragment_date_picker
 
     override fun initUI(savedInstanceState: Bundle?) {
+        val flHeader = view?.findViewById<FrameLayout>(R.id.flHeader)
         val btnOk = view?.findViewById<MaterialButton>(R.id.btnOk)
         val btnChangeView = view?.findViewById<MaterialButton>(R.id.btnChangeView)
         var calendar = view?.findViewById<CalendarPickerView>(R.id.calendar_view)
+        var calendarLight = view?.findViewById<CalendarPickerLightView>(R.id.calendar_light_view)
         var daysNames = view?.findViewById<CalendarRowView>(R.id.daysNames)
         btnOk?.setOnClickListener {
             dismiss()
         }
 
         btnChangeView?.setOnClickListener {
-            btnChangeView.text = if(calendar?.pickerType == CalendarPickerView.PickerType.YEARLY) "Monthly" else "Yearly"
-            calendar?.updateDatePickerType()
+            pickerType = if (pickerType == CalendarPickerView.PickerType.MONTHLY) CalendarPickerView.PickerType.YEARLY else CalendarPickerView.PickerType.MONTHLY
+            btnChangeView.text = if (pickerType == CalendarPickerView.PickerType.YEARLY) "Monthly" else "Yearly"
+            calendar?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
+            calendarLight?.isVisible = pickerType == CalendarPickerView.PickerType.YEARLY
+            flHeader?.isVisible = pickerType == CalendarPickerView.PickerType.MONTHLY
         }
+
 
         val nextYear = Calendar.getInstance()
         nextYear.add(Calendar.YEAR, 1)
         val lastYear = Calendar.getInstance()
         lastYear.add(Calendar.YEAR, -10)
-//        val list = ArrayList<Int>()
-        //        list.add(2);
-//        calendar.deactivateDates(list)
+
         val arrayList = ArrayList<Date>()
         val selected = ArrayList<Date>()
         try {
@@ -69,14 +78,13 @@ class DatePickerFragment() : BaseDialogFragment() {
         } catch (e: ParseException) {
             e.printStackTrace()
         }
+        calendarLight?.initialize(lastYear.time, nextYear.time)
+
         calendar?.initialize(lastYear.time, nextYear.time)
             ?.inMode(CalendarPickerView.SelectionMode.RANGE)
             ?.withHighlightedDates(arrayList)
             ?.withSelectedDates(selected)
-//        calendar.scrollToDate(Date())
-//        button.setOnClickListener(View.OnClickListener {
-//            Toast.makeText(this@SampleActivity, "list " + calendar.selectedDates.toString(), Toast.LENGTH_LONG).show()
-//        })
+
         daysNames?.let { setUpWeekNames(it) }
     }
 

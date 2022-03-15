@@ -147,6 +147,6 @@ class MonthView(context: Context?, attrs: AttributeSet?) : LinearLayout(context,
         val headerTextColor: Int,
         val locale: Locale,
         val adapter: DayViewAdapter,
-        val listener: Listener
+        val listener: Listener?
     )
 }

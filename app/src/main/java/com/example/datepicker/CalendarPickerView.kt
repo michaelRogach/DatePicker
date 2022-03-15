@@ -3,9 +3,9 @@ package com.example.datepicker
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.datepicker.adapter.MonthAdapter
-import com.example.datepicker.adapter.data_holders.HeaderDH
 import com.example.datepicker.adapter.data_holders.MonthDH
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,7 +43,6 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     private var dayViewAdapter: DayViewAdapter = DefaultDayViewAdapter()
     private var monthsReverseOrder = false
     private var items = arrayListOf<Any>()
-    var pickerType = PickerType.MONTHLY
     private var minDate = Date()
     private var maxDate = Date()
 
@@ -109,32 +108,8 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         setBackgroundColor(bg)
     }
 
-    fun updateDatePickerType() {
-//        months.clear()
-        items.clear()
-        this.pickerType = if (pickerType == PickerType.MONTHLY) PickerType.YEARLY else PickerType.MONTHLY
-        adapter = MonthAdapter(prepareStyleData())
-        setAdapter(adapter)
-        initLayoutManager()
-        initCalendars(minDate, maxDate)
-        prepareItems()
-        scrollToSelectedDates()
-    }
-
     private fun initLayoutManager() {
-        val layoutManager: LinearLayoutManager
-        if (pickerType == PickerType.MONTHLY) {
-            layoutManager = LinearLayoutManager(context, VERTICAL, monthsReverseOrder)
-        } else {
-            val gridDecorator = GridSpaceItemDecoration(20)
-            addItemDecoration(gridDecorator)
-            layoutManager = GridLayoutManager(context, 3, VERTICAL, monthsReverseOrder)
-            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return if (position == 0 || position % 13 == 0) 3 else 1
-                }
-            }
-        }
+        val layoutManager = LinearLayoutManager(context, VERTICAL, monthsReverseOrder)
         setLayoutManager(layoutManager)
     }
 
@@ -143,7 +118,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         clearPreviousStates()
         displayOnly = false
         initCalendars(minDate, maxDate)
-        prepareItems(true)
+        prepareItems()
         return FluentInitializer()
     }
 
@@ -179,48 +154,34 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         }
     }
 
-    private fun prepareItems(forceLoad: Boolean = false) {
+    private fun prepareItems() {
         val maxMonth = maxCal.get(Calendar.MONTH)
         val maxYear = maxCal.get(Calendar.YEAR)
-        val monthNameFormat = SimpleDateFormat(if (pickerType == PickerType.YEARLY) "MMM" else "MMMM, yyyy", Locale.getDefault())
+        val monthNameFormat = SimpleDateFormat("MMMM, yyyy", Locale.getDefault())
         monthNameFormat.timeZone = timeZone
 
-        if(forceLoad) {
-            while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.
-                        || monthCounter.get(Calendar.YEAR) < maxYear) // Up to the year.
-                && monthCounter.get(Calendar.YEAR) < maxYear + 1) { // But not > next yr.
-                val date = monthCounter.time
-                val month = MonthDescriptor(
-                    monthCounter.get(Calendar.MONTH), monthCounter.get(Calendar.YEAR), date,
-                    monthNameFormat.format(date) ?: "")
-                cells[monthKey(month)] = getMonthCells(month, monthCounter)
-                months.add(month)
-                monthCounter.add(Calendar.MONTH, 1)
-            }
-        } else {
-            months.forEach { it.apply { label = monthNameFormat.format(date) ?: "" } }
+        while ((monthCounter.get(Calendar.MONTH) <= maxMonth // Up to, including the month.
+                    || monthCounter.get(Calendar.YEAR) < maxYear) // Up to the year.
+            && monthCounter.get(Calendar.YEAR) < maxYear + 1) { // But not > next yr.
+            val date = monthCounter.time
+            val month = MonthDescriptor(
+                monthCounter.get(Calendar.MONTH), monthCounter.get(Calendar.YEAR), date,
+                monthNameFormat.format(date) ?: "")
+            cells[monthKey(month)] = getMonthCells(month, monthCounter)
+            months.add(month)
+            monthCounter.add(Calendar.MONTH, 1)
         }
 
-        if (pickerType == PickerType.MONTHLY) {
-            prepareDHs(pickerType, months)
-        } else {
-            months.chunked(12).forEach {
-                val monthDescriptor = it.first()
-                items.add(HeaderDH(monthDescriptor.date.time, SimpleDateFormat("yyyy", Locale.getDefault()).format(monthDescriptor.date)))
-                prepareDHs(pickerType, it)
-            }
-        }
+        prepareDHs(months)
         adapter?.submitList(items)
     }
 
-    private fun prepareDHs(pickerType: PickerType, months: List<MonthDescriptor>) {
+    private fun prepareDHs(months: List<MonthDescriptor>) {
         months.forEachIndexed { index, month ->
             items.add(
                 MonthDH(
                     month,
-                    if (pickerType == PickerType.MONTHLY) cells.getValueAtIndex(index)!!
-                    else
-                        cells.getValueAtIndex(cells.getIndexOfKey(monthKey(month))) ?: emptyList(),
+                    cells.getValueAtIndex(cells.getIndexOfKey(monthKey(month))) ?: emptyList(),
                     displayOnly, titleTypeface, dateTypeface, deactivatedDates
                 ))
         }
@@ -340,7 +301,7 @@ class CalendarPickerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         return MonthView.StyleData(
             today, dividerColor,
             dayBackgroundResId, dayTextColorResId, false,
-            headerTextColor, locale, if (pickerType == PickerType.MONTHLY) DefaultDayViewAdapter() else GridDayViewAdapter(), cellClickedListener,
+            headerTextColor, locale, DefaultDayViewAdapter(), cellClickedListener,
         )
     }
 
